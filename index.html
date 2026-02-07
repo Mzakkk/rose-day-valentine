@@ -62,7 +62,8 @@ button{
 .yes{
     background:#ff4d6d;
     color:white;
-    left:0;
+    left:50%;
+    transform:translateX(-50%);
     top:60px;
 }
 
@@ -139,7 +140,7 @@ noBtn.addEventListener("click", () => {
 });
 
 /* =========================
-   BLACK HEARTS + MULTIPLY
+   BLACK HEARTS (CONTROLLED)
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -152,39 +153,50 @@ resize();
 addEventListener("resize", resize);
 
 const hearts = [];
-const LINK_DISTANCE = 140;
+const LINK_DISTANCE = 130;
+const MAX_HEARTS = 120;
+const MULTIPLY_RADIUS = 20;
 
 class Heart{
     constructor(x,y){
         this.x = x ?? Math.random()*canvas.width;
         this.y = y ?? Math.random()*canvas.height;
-        this.vx = (Math.random()-0.5)*0.5;
-        this.vy = (Math.random()-0.5)*0.5;
+        this.vx = (Math.random()-0.5)*0.4;
+        this.vy = (Math.random()-0.5)*0.4;
         this.size = 12;
+        this.alpha = 0;
     }
     move(){
         this.x += this.vx;
         this.y += this.vy;
         if(this.x<0||this.x>canvas.width) this.vx*=-1;
         if(this.y<0||this.y>canvas.height) this.vy*=-1;
+        this.alpha = Math.min(1, this.alpha + 0.02);
     }
     draw(){
+        ctx.globalAlpha = this.alpha;
         ctx.font = this.size+"px serif";
         ctx.fillText("🖤",this.x,this.y);
+        ctx.globalAlpha = 1;
     }
 }
 
 for(let i=0;i<50;i++) hearts.push(new Heart());
 
 canvas.addEventListener("click", e=>{
-    hearts.forEach(h=>{
-        const d = Math.hypot(h.x-e.clientX,h.y-e.clientY);
-        if(d < 25){
-            for(let i=0;i<3;i++){
-                hearts.push(new Heart(h.x,h.y));
-            }
+    let added = 0;
+
+    for(let i = hearts.length-1; i >= 0; i--){
+        if(hearts.length >= MAX_HEARTS) break;
+
+        const h = hearts[i];
+        const d = Math.hypot(h.x - e.clientX, h.y - e.clientY);
+
+        if(d < MULTIPLY_RADIUS && added < 2){
+            hearts.push(new Heart(h.x, h.y));
+            added++;
         }
-    });
+    }
 });
 
 function animate(){
