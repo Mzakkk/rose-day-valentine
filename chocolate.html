@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chocolate Day 🍫</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    font-family:Georgia,serif;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#4b2e2b,#7b3f3a);
+}
+
+/* Floating chocolates */
+.choco{
+    position:absolute;
+    bottom:-40px;
+    font-size:28px;
+    opacity:0.7;
+    animation:floatUp 14s linear infinite;
+    pointer-events:none;
+}
+
+@keyframes floatUp{
+    to{transform:translateY(-130vh); opacity:0;}
+}
+
+/* Card */
+.card{
+    background:rgba(255,255,255,0.92);
+    padding:42px 34px;
+    border-radius:30px;
+    text-align:center;
+    max-width:540px;
+    z-index:5;
+}
+
+h1{
+    font-size:34px;
+    color:#5a1f16;
+    margin-bottom:25px;
+}
+
+p{
+    font-size:20px;
+    color:#4b1c14;
+    line-height:1.6;
+}
+
+/* Button block */
+.buttons{
+    margin-top:30px;
+}
+
+button{
+    padding:14px 34px;
+    font-size:18px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+}
+
+.chocoBtn{
+    background:#7b3f3a;
+    color:white;
+}
+
+/* Final message */
+.finalMessage{
+    display:none;
+    font-size:22px;
+    color:#5a1f16;
+    margin-top:25px;
+}
+
+/* TIMER */
+.timerBox{
+    display:none;
+    margin-top:25px;
+    padding:18px;
+    border-radius:20px;
+    background:#f7e6e4;
+}
+
+#countdown{
+    font-size:18px;
+    color:#5a1f16;
+    margin-bottom:12px;
+}
+
+.nextBtn{
+    padding:12px 30px;
+    font-size:18px;
+    border:none;
+    border-radius:30px;
+    background:#bbb;
+    color:#555;
+    cursor:not-allowed;
+}
+
+.nextBtn.unlocked{
+    background:#7b3f3a;
+    color:white;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>Happy Chocolate Day, RIYA 🍫</h1>
+
+    <p>
+        Just like chocolate, you make life sweeter without trying.
+        Every little moment with you melts my worries
+        and fills my heart with warmth.
+    </p>
+
+    <div class="buttons" id="actionButtons">
+        <button class="chocoBtn" onclick="showChocolate()">Chocolate 🍫</button>
+    </div>
+
+    <div class="finalMessage" id="finalMsg">
+        This chocolate is sweet,  
+        but it still can’t compete with you 🤎
+    </div>
+
+    <!-- TIMER + NEXT -->
+    <div class="timerBox" id="timerBox">
+        <div id="countdown">🔒 Unlocks on Teddy Day</div>
+        <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
+    </div>
+
+</div>
+
+<script>
+/* EASY TEST SWITCH */
+const TEST_MODE = false; // set true to test instantly
+
+function showChocolate(){
+    document.getElementById("actionButtons").style.display="none";
+    document.getElementById("finalMsg").style.display="block";
+    document.getElementById("timerBox").style.display="block";
+
+    for(let i=0;i<18;i++){
+        const c=document.createElement("span");
+        c.className="choco";
+        c.innerHTML="🍫";
+        c.style.left=Math.random()*100+"%";
+        c.style.animationDelay=Math.random()*6+"s";
+        document.body.appendChild(c);
+    }
+}
+
+/* DATE LOCK — 10 FEB (TEDDY DAY) */
+const targetDate = TEST_MODE
+    ? new Date(Date.now() + 5000)
+    : new Date("2026-02-10T00:00:00");
+
+const countdownEl = document.getElementById("countdown");
+const nextBtn = document.getElementById("nextBtn");
+
+function updateTimer(){
+    const now=new Date();
+    const diff=targetDate-now;
+
+    if(diff<=0){
+        countdownEl.innerHTML="🧸 It’s Teddy Day 🧸";
+        nextBtn.disabled=false;
+        nextBtn.classList.add("unlocked");
+        nextBtn.innerText="Next ➜";
+        return;
+    }
+
+    const h=Math.floor(diff/(1000*60*60));
+    const m=Math.floor((diff/(1000*60))%60);
+    const s=Math.floor((diff/1000)%60);
+
+    countdownEl.innerHTML=`🔒 Unlocks in ${h}h ${m}m ${s}s`;
+}
+
+setInterval(updateTimer,1000);
+updateTimer();
+
+nextBtn.onclick=()=>{
+    if(!nextBtn.disabled){
+        window.location.href="teddy.html";
+    }
+};
+</script>
+
+</body>
+</html>
