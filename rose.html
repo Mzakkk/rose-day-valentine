@@ -180,6 +180,9 @@ button{
 </div>
 
 <script>
+    /* ENSURE EASY TESTING */
+const TEST_MODE = true; // ← change to false after testing
+
 function showRoses(){
     document.getElementById("actionButtons").style.display = "none";
     document.getElementById("finalMsg").style.display = "block";
@@ -196,7 +199,10 @@ function showRoses(){
 }
 
 /* DATE LOCK (8 FEB – PROPOSE DAY) */
-const targetDate = new Date("2026-02-08T00:00:00");
+const targetDate = TEST_MODE
+    ? new Date(Date.now() + 5000)   // unlocks in 5 seconds
+    : new Date("2026-02-08T00:00:00");
+
 const countdownEl = document.getElementById("countdown");
 const nextBtn = document.getElementById("nextBtn");
 
