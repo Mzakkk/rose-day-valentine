@@ -9,106 +9,101 @@ body{
     margin:0;
     height:100vh;
     font-family:Georgia,serif;
-    overflow:hidden;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#8d5a45,#b37a5d);
+    background:linear-gradient(135deg,#9b6b52,#c08b6f);
+    overflow:hidden;
 }
 
-/* =====================
-   CARD
-===================== */
+/* CARD */
 .card{
+    position:relative;
+    width:90%;
+    max-width:540px;
     background:#fff8f5;
     padding:42px 34px 60px;
     border-radius:30px;
     text-align:center;
-    max-width:540px;
-    z-index:5;
-    position:relative;
     overflow:hidden;
 }
 
-/* Syrup inside card */
+/* SYRUP LAYER */
 .syrup-layer{
     position:absolute;
     inset:0;
-    z-index:0;
+    z-index:1;
     pointer-events:none;
 }
 
-/* Individual syrup */
+/* SYRUP DROP */
 .syrup{
     position:absolute;
-    width:18px;
-    height:180px;
+    top:-40px;
+    width:14px;
+    height:120px;
     background:linear-gradient(
         to bottom,
         rgba(255,255,255,0.35),
-        rgba(120,60,40,0.85)
+        rgba(120,60,40,0.9)
     );
-    border-radius:0 0 20px 20px;
-    filter:blur(0.4px);
-    opacity:0.6;
-    transition:transform 1.8s ease-out;
+    border-radius:0 0 14px 14px;
+    opacity:0.65;
+    animation:drip 6s linear forwards;
 }
 
-/* drip head */
+/* round drip */
 .syrup::after{
     content:"";
     position:absolute;
     bottom:-10px;
     left:50%;
     transform:translateX(-50%);
-    width:20px;
-    height:20px;
-    background:rgba(120,60,40,0.9);
+    width:18px;
+    height:18px;
+    background:rgba(120,60,40,0.95);
     border-radius:50%;
 }
 
+@keyframes drip{
+    from{transform:translateY(0);}
+    to{transform:translateY(340px);}
+}
+
 /* CONTENT ABOVE SYRUP */
-.card-content{
+.content{
     position:relative;
-    z-index:2;
+    z-index:3;
 }
 
 h1{
-    font-size:34px;
+    font-size:32px;
     color:#5a1f16;
-    margin-bottom:20px;
+    margin-bottom:18px;
 }
 
 p{
-    font-size:20px;
+    font-size:19px;
     color:#4b1c14;
     line-height:1.6;
 }
 
-/* Buttons */
-.buttons{
-    margin-top:25px;
-}
-
 button{
+    margin-top:22px;
     padding:14px 34px;
     font-size:18px;
     border:none;
     border-radius:30px;
+    background:#7b3f3a;
+    color:white;
     cursor:pointer;
 }
 
-.chocoBtn{
-    background:#7b3f3a;
-    color:white;
-}
-
-/* Message */
 .finalMessage{
     display:none;
-    font-size:22px;
+    margin-top:22px;
+    font-size:21px;
     color:#5a1f16;
-    margin-top:25px;
 }
 
 /* TIMER */
@@ -120,14 +115,12 @@ button{
 }
 
 #countdown{
-    font-size:18px;
-    color:#5a1f16;
-    margin-bottom:12px;
+    font-size:17px;
+    margin-bottom:10px;
 }
 
 .nextBtn{
     padding:12px 30px;
-    font-size:18px;
     border:none;
     border-radius:30px;
     background:#bbb;
@@ -147,10 +140,9 @@ button{
 
 <div class="card" id="card">
 
-    <!-- SYRUP LAYER -->
     <div class="syrup-layer" id="syrupLayer"></div>
 
-    <div class="card-content">
+    <div class="content">
 
         <h1>Happy Chocolate Day, RIYA 🍫</h1>
 
@@ -160,9 +152,7 @@ button{
             and fills my heart with warmth.
         </p>
 
-        <div class="buttons">
-            <button class="chocoBtn" onclick="showChocolate()">Chocolate 🍫</button>
-        </div>
+        <button onclick="showChocolate()">Chocolate 🍫</button>
 
         <div class="finalMessage" id="finalMsg">
             Chocolate on your lips would be sweet —  
@@ -178,38 +168,28 @@ button{
 </div>
 
 <script>
-/* CREATE SYRUP */
-const syrupLayer=document.getElementById("syrupLayer");
-const syrups=[];
+/* SYRUP INTERACTION */
+const card = document.getElementById("card");
+const syrupLayer = document.getElementById("syrupLayer");
 
-for(let i=0;i<5;i++){
-    const s=document.createElement("div");
-    s.className="syrup";
-    s.style.left=(10 + i*18)+"%";
-    s.style.top="-120px";
-    syrupLayer.appendChild(s);
-    syrups.push(s);
-}
+function createSyrup(x){
+    const drop = document.createElement("div");
+    drop.className = "syrup";
+    drop.style.left = x + "px";
+    syrupLayer.appendChild(drop);
 
-/* MOVE SYRUP TOWARDS TOUCH */
-const card=document.getElementById("card");
-
-function moveSyrup(x,y){
-    const rect=card.getBoundingClientRect();
-    syrups.forEach(s=>{
-        const dx=x-rect.left;
-        const dy=y-rect.top;
-        s.style.transform=`translate(${dx*0.15}px, ${dy*0.25}px)`;
-    });
+    setTimeout(()=>drop.remove(),6000);
 }
 
 card.addEventListener("click",e=>{
-    moveSyrup(e.clientX,e.clientY);
+    const rect = card.getBoundingClientRect();
+    createSyrup(e.clientX - rect.left);
 });
 
 card.addEventListener("touchstart",e=>{
-    const t=e.touches[0];
-    moveSyrup(t.clientX,t.clientY);
+    const rect = card.getBoundingClientRect();
+    const t = e.touches[0];
+    createSyrup(t.clientX - rect.left);
 });
 
 /* MESSAGE */
@@ -217,7 +197,7 @@ function showChocolate(){
     document.getElementById("finalMsg").style.display="block";
 }
 
-/* DATE LOCK */
+/* TIMER */
 const TEST_MODE=false;
 const targetDate = TEST_MODE
     ? new Date(Date.now()+5000)
@@ -227,7 +207,7 @@ const countdownEl=document.getElementById("countdown");
 const nextBtn=document.getElementById("nextBtn");
 
 function updateTimer(){
-    const diff=targetDate-new Date();
+    const diff = targetDate - new Date();
     if(diff<=0){
         countdownEl.innerHTML="🧸 It’s Teddy Day 🧸";
         nextBtn.disabled=false;
