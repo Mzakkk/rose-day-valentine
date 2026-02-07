@@ -18,14 +18,14 @@ body{
 /* Floating hearts */
 .heart{
     position:absolute;
-    bottom:-30px;
-    font-size:26px;
-    opacity:0.5;
-    animation:floatUp 12s linear infinite;
+    bottom:-40px;
+    font-size:28px;
+    opacity:0.55;
+    animation:floatUp 14s linear infinite;
 }
 @keyframes floatUp{
     from{transform:translateY(0); opacity:0.6;}
-    to{transform:translateY(-120vh); opacity:0;}
+    to{transform:translateY(-130vh); opacity:0;}
 }
 
 .container{
@@ -36,18 +36,19 @@ body{
 h1{
     font-size:40px;
     color:#c9184a;
-    margin-bottom:20px;
+    margin-bottom:18px;
 }
 
 p{
     font-size:20px;
     color:#7a1c2d;
-    margin-bottom:40px;
+    margin-bottom:35px;
 }
 
+/* Button area */
 .buttons{
     position:relative;
-    width:320px;
+    width:360px;
     height:90px;
     margin:auto;
 }
@@ -65,22 +66,24 @@ button{
     background:#ff4d6d;
     color:white;
     left:0;
+    top:20px;
 }
 
 .no{
     background:#e0e0e0;
     color:#333;
     right:0;
+    top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- hearts -->
+<!-- Hearts -->
 <span class="heart" style="left:10%;">❤️</span>
-<span class="heart" style="left:30%; animation-delay:3s;">💖</span>
-<span class="heart" style="left:50%; animation-delay:6s;">❤️</span>
+<span class="heart" style="left:30%; animation-delay:4s;">💖</span>
+<span class="heart" style="left:50%; animation-delay:7s;">❤️</span>
 <span class="heart" style="left:70%; animation-delay:2s;">💘</span>
 
 <div class="container">
@@ -98,10 +101,19 @@ const noBtn = document.getElementById("noBtn");
 const area = document.querySelector(".buttons");
 
 function escapeSafe(){
-    const maxX = area.offsetWidth - noBtn.offsetWidth;
-    const maxY = area.offsetHeight - noBtn.offsetHeight;
-    noBtn.style.left = Math.random() * maxX + "px";
-    noBtn.style.top = Math.random() * maxY + "px";
+    const padding = 10;
+
+    const minX = area.offsetWidth / 2;
+    const maxX = area.offsetWidth - noBtn.offsetWidth - padding;
+
+    const minY = padding;
+    const maxY = area.offsetHeight - noBtn.offsetHeight - padding;
+
+    const x = Math.random() * (maxX - minX) + minX;
+    const y = Math.random() * (maxY - minY) + minY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
 }
 
 noBtn.addEventListener("mouseenter", escapeSafe);
@@ -112,5 +124,4 @@ function goYes(){
 }
 </script>
 
-</body>
-</html>
+</b
