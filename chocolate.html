@@ -16,13 +16,27 @@ body{
     background:linear-gradient(135deg,#4b2e2b,#7b3f3a);
 }
 
-/* Floating chocolates */
+/* Animated background chocolates */
+.bg-choco{
+    position:absolute;
+    font-size:26px;
+    opacity:0.15;
+    animation:drift 20s linear infinite;
+    pointer-events:none;
+}
+
+@keyframes drift{
+    from{transform:translateY(120vh) rotate(0deg);}
+    to{transform:translateY(-140vh) rotate(360deg);}
+}
+
+/* Floating chocolates on click */
 .choco{
     position:absolute;
     bottom:-40px;
-    font-size:28px;
-    opacity:0.7;
-    animation:floatUp 14s linear infinite;
+    font-size:30px;
+    opacity:0.8;
+    animation:floatUp 12s linear infinite;
     pointer-events:none;
 }
 
@@ -43,7 +57,7 @@ body{
 h1{
     font-size:34px;
     color:#5a1f16;
-    margin-bottom:25px;
+    margin-bottom:20px;
 }
 
 p{
@@ -52,9 +66,9 @@ p{
     line-height:1.6;
 }
 
-/* Chocolate button */
+/* Buttons */
 .buttons{
-    margin-top:30px;
+    margin-top:25px;
 }
 
 button{
@@ -70,15 +84,21 @@ button{
     color:white;
 }
 
-/* Final message */
+/* Message after click */
 .finalMessage{
     display:none;
     font-size:22px;
     color:#5a1f16;
     margin-top:25px;
+    animation:fadeIn 1.5s ease;
 }
 
-/* TIMER — ALWAYS VISIBLE */
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+/* TIMER */
 .timerBox{
     margin-top:28px;
     padding:18px;
@@ -112,6 +132,18 @@ button{
 
 <body>
 
+<!-- background animation -->
+<script>
+for(let i=0;i<20;i++){
+    const bg=document.createElement("span");
+    bg.className="bg-choco";
+    bg.innerHTML="🍫";
+    bg.style.left=Math.random()*100+"%";
+    bg.style.animationDelay=Math.random()*20+"s";
+    document.body.appendChild(bg);
+}
+</script>
+
 <div class="card">
 
     <h1>Happy Chocolate Day, RIYA 🍫</h1>
@@ -127,11 +159,10 @@ button{
     </div>
 
     <div class="finalMessage" id="finalMsg">
-        This chocolate is sweet,  
-        but it still can’t compete with you 🤎
+        Chocolate on your lips would be sweet —  
+        but I’d still want to taste you more 🤎
     </div>
 
-    <!-- ✅ TIMER + NEXT (ALWAYS SHOWN) -->
     <div class="timerBox">
         <div id="countdown">🔒 Unlocks on Teddy Day</div>
         <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
@@ -140,23 +171,22 @@ button{
 </div>
 
 <script>
-/* EASY TEST SWITCH */
-const TEST_MODE = false; // set true to unlock in 5 sec
+const TEST_MODE = false;
 
 function showChocolate(){
     document.getElementById("finalMsg").style.display="block";
 
-    for(let i=0;i<18;i++){
+    for(let i=0;i<16;i++){
         const c=document.createElement("span");
         c.className="choco";
         c.innerHTML="🍫";
         c.style.left=Math.random()*100+"%";
-        c.style.animationDelay=Math.random()*6+"s";
+        c.style.animationDelay=Math.random()*4+"s";
         document.body.appendChild(c);
     }
 }
 
-/* DATE LOCK — 10 FEB (TEDDY DAY) */
+/* DATE LOCK — 10 FEB */
 const targetDate = TEST_MODE
     ? new Date(Date.now() + 5000)
     : new Date("2026-02-10T00:00:00");
@@ -165,10 +195,9 @@ const countdownEl = document.getElementById("countdown");
 const nextBtn = document.getElementById("nextBtn");
 
 function updateTimer(){
-    const now=new Date();
-    const diff=targetDate-now;
+    const diff = targetDate - new Date();
 
-    if(diff<=0){
+    if(diff <= 0){
         countdownEl.innerHTML="🧸 It’s Teddy Day 🧸";
         nextBtn.disabled=false;
         nextBtn.classList.add("unlocked");
@@ -176,8 +205,8 @@ function updateTimer(){
         return;
     }
 
-    const h=Math.floor(diff/(1000*60*60));
-    const m=Math.floor((diff/(1000*60))%60));
+    const h=Math.floor(diff/3600000);
+    const m=Math.floor((diff/60000)%60);
     const s=Math.floor((diff/1000)%60);
 
     countdownEl.innerHTML=`🔒 Unlocks in ${h}h ${m}m ${s}s`;
