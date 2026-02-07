@@ -16,18 +16,47 @@ body{
     background:linear-gradient(135deg,#4b2e2b,#7b3f3a);
 }
 
-/* Animated background chocolates */
-.bg-choco{
-    position:absolute;
-    font-size:26px;
-    opacity:0.15;
-    animation:drift 20s linear infinite;
+/* =====================
+   BACKGROUND ANIMATION
+===================== */
+.bg-layer{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:0;
     pointer-events:none;
 }
 
-@keyframes drift{
-    from{transform:translateY(120vh) rotate(0deg);}
-    to{transform:translateY(-140vh) rotate(360deg);}
+/* Chocolate bubbles */
+.bubble{
+    position:absolute;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.12);
+    filter:blur(2px);
+    animation:floatBubble 22s linear infinite;
+}
+
+@keyframes floatBubble{
+    from{transform:translateY(110vh) scale(0.8);}
+    to{transform:translateY(-140vh) scale(1.2);}
+}
+
+/* Chocolate strips */
+.strip{
+    position:absolute;
+    width:120px;
+    height:6px;
+    background:rgba(90,31,22,0.25);
+    border-radius:10px;
+    filter:blur(1px);
+    animation:driftStrip 26s linear infinite;
+}
+
+@keyframes driftStrip{
+    from{transform:translate(-20vw,120vh) rotate(12deg);}
+    to{transform:translate(120vw,-140vh) rotate(12deg);}
 }
 
 /* Floating chocolates on click */
@@ -35,7 +64,7 @@ body{
     position:absolute;
     bottom:-40px;
     font-size:30px;
-    opacity:0.8;
+    opacity:0.75;
     animation:floatUp 12s linear infinite;
     pointer-events:none;
 }
@@ -44,7 +73,9 @@ body{
     to{transform:translateY(-130vh); opacity:0;}
 }
 
-/* Card */
+/* =====================
+   CARD
+===================== */
 .card{
     background:rgba(255,255,255,0.92);
     padding:42px 34px;
@@ -52,6 +83,7 @@ body{
     text-align:center;
     max-width:540px;
     z-index:5;
+    position:relative;
 }
 
 h1{
@@ -132,17 +164,8 @@ button{
 
 <body>
 
-<!-- background animation -->
-<script>
-for(let i=0;i<20;i++){
-    const bg=document.createElement("span");
-    bg.className="bg-choco";
-    bg.innerHTML="🍫";
-    bg.style.left=Math.random()*100+"%";
-    bg.style.animationDelay=Math.random()*20+"s";
-    document.body.appendChild(bg);
-}
-</script>
+<!-- BACKGROUND ANIMATION LAYER -->
+<div class="bg-layer" id="bg"></div>
 
 <div class="card">
 
@@ -171,12 +194,33 @@ for(let i=0;i<20;i++){
 </div>
 
 <script>
-const TEST_MODE = false;
+/* BACKGROUND ELEMENTS */
+const bg=document.getElementById("bg");
 
+// bubbles
+for(let i=0;i<18;i++){
+    const b=document.createElement("div");
+    b.className="bubble";
+    b.style.left=Math.random()*100+"%";
+    b.style.animationDelay=Math.random()*20+"s";
+    b.style.opacity=Math.random()*0.15+0.05;
+    bg.appendChild(b);
+}
+
+// chocolate strips
+for(let i=0;i<6;i++){
+    const s=document.createElement("div");
+    s.className="strip";
+    s.style.top=Math.random()*100+"%";
+    s.style.animationDelay=Math.random()*25+"s";
+    bg.appendChild(s);
+}
+
+/* CLICK EFFECT */
 function showChocolate(){
     document.getElementById("finalMsg").style.display="block";
 
-    for(let i=0;i<16;i++){
+    for(let i=0;i<14;i++){
         const c=document.createElement("span");
         c.className="choco";
         c.innerHTML="🍫";
@@ -186,18 +230,19 @@ function showChocolate(){
     }
 }
 
-/* DATE LOCK — 10 FEB */
+/* DATE LOCK */
+const TEST_MODE=false;
 const targetDate = TEST_MODE
-    ? new Date(Date.now() + 5000)
+    ? new Date(Date.now()+5000)
     : new Date("2026-02-10T00:00:00");
 
-const countdownEl = document.getElementById("countdown");
-const nextBtn = document.getElementById("nextBtn");
+const countdownEl=document.getElementById("countdown");
+const nextBtn=document.getElementById("nextBtn");
 
 function updateTimer(){
-    const diff = targetDate - new Date();
+    const diff=targetDate-new Date();
 
-    if(diff <= 0){
+    if(diff<=0){
         countdownEl.innerHTML="🧸 It’s Teddy Day 🧸";
         nextBtn.disabled=false;
         nextBtn.classList.add("unlocked");
@@ -211,7 +256,6 @@ function updateTimer(){
 
     countdownEl.innerHTML=`🔒 Unlocks in ${h}h ${m}m ${s}s`;
 }
-
 setInterval(updateTimer,1000);
 updateTimer();
 
