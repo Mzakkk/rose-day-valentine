@@ -1,103 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Happy Rose Day RIYA</title>
+<title>For RIYA 🌹</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
     margin:0;
     height:100vh;
-    background:url('https://images.unsplash.com/photo-1518893494013-481c1d8ed3fd')
-    center/cover no-repeat;
+    font-family:Georgia,serif;
+    overflow:hidden;
     display:flex;
     justify-content:center;
     align-items:center;
-    font-family:Georgia,serif;
-    color:white;
-    overflow:hidden;
+    background:linear-gradient(135deg,#ffb3c6,#ffe5ec);
+    animation:bgMove 10s ease infinite alternate;
+}
+@keyframes bgMove{
+    from{background-position:0%;}
+    to{background-position:100%;}
+}
+
+/* Floating hearts */
+.heart{
+    position:absolute;
+    bottom:-40px;
+    font-size:26px;
+    opacity:0.45;
+    animation:floatUp 16s linear infinite;
+}
+@keyframes floatUp{
+    to{transform:translateY(-130vh); opacity:0;}
 }
 
 .card{
-    background:rgba(0,0,0,0.6);
-    padding:30px;
-    border-radius:20px;
+    background:rgba(255,255,255,0.75);
+    padding:40px 30px;
+    border-radius:30px;
     text-align:center;
-    animation:fadeIn 2s ease;
+    max-width:520px;
 }
 
-h1{font-size:36px;}
-p{font-size:18px;}
+h1{
+    font-size:34px;
+    color:#b5172e;
+    margin-bottom:25px;
+}
 
+p{
+    font-size:20px;
+    color:#6d1020;
+    line-height:1.6;
+    margin-bottom:40px;
+}
+
+/* Buttons */
 .buttons{
-    margin-top:20px;
     position:relative;
-    height:80px;
+    width:380px;
+    height:90px;
+    margin:auto;
 }
 
 button{
-    padding:12px 25px;
+    padding:14px 30px;
     font-size:18px;
     border:none;
-    border-radius:25px;
+    border-radius:30px;
     cursor:pointer;
     position:absolute;
 }
 
-.yes{
+.accept{
     background:#ff4d6d;
     color:white;
-    left:20px;
+    left:0;
+    top:20px;
 }
 
-.no{
-    background:#adb5bd;
-    color:black;
-    left:140px;
-}
-
-@keyframes fadeIn{
-    from{opacity:0; transform:translateY(20px);}
-    to{opacity:1; transform:translateY(0);}
+.reject{
+    background:#ddd;
+    color:#333;
+    right:0;
+    top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<audio autoplay loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
+<!-- Hearts -->
+<span class="heart" style="left:15%;">❤️</span>
+<span class="heart" style="left:40%; animation-delay:5s;">💖</span>
+<span class="heart" style="left:65%; animation-delay:9s;">💘</span>
 
 <div class="card">
-<h1>Happy Rose Day, RIYA 🌹</h1>
-<p>
-RIYA, on this Rose Day I’m sending you<br>
-lots of beautiful roses to remind you<br>
-how special you are to me.
-</p>
+    <h1>Happy Rose Day, RIYA 🌹</h1>
+    <p>
+        I don’t need a bouquet—having you is enough, baby.
+        One look at you makes my heart feel fuller than any
+        room filled with roses.
+    </p>
 
-<div class="buttons">
-<button class="yes" onclick="yes()">Yes 💖</button>
-<button class="no" id="noBtn">No 🙈</button>
-</div>
+    <div class="buttons">
+        <button class="accept">Accept my rose 🌹</button>
+        <button class="reject" id="rejectBtn">Reject my rose 🙈</button>
+    </div>
 </div>
 
 <script>
-const noBtn = document.getElementById("noBtn");
+const reject = document.getElementById("rejectBtn");
+const box = document.querySelector(".buttons");
 
-function moveButton(){
-    const x = Math.random() * 200;
-    const y = Math.random() * 40;
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
+function escapeInside(){
+    const padding = 10;
+
+    const minX = box.offsetWidth / 2;
+    const maxX = box.offsetWidth - reject.offsetWidth - padding;
+
+    const minY = padding;
+    const maxY = box.offsetHeight - reject.offsetHeight - padding;
+
+    const x = Math.random() * (maxX - minX) + minX;
+    const y = Math.random() * (maxY - minY) + minY;
+
+    reject.style.left = x + "px";
+    reject.style.top = y + "px";
 }
 
-noBtn.addEventListener("mouseover", moveButton);
-noBtn.addEventListener("touchstart", moveButton);
-
-function yes(){
-    alert("RIYA ❤️ You just made my day! 🌹");
-}
+reject.addEventListener("mouseenter", escapeInside);
+reject.addEventListener("touchstart", escapeInside);
 </script>
 
 </body>
