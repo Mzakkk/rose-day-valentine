@@ -88,39 +88,18 @@ button{
 
 <script>
 /* =====================
-   DEVICE
-===================== */
-const isMobile = window.innerWidth < 768;
-
-/* =====================
-   NO BUTTON
+   NO BUTTON (FIXED)
 ===================== */
 const noBtn = document.getElementById("noBtn");
-const area = document.getElementById("btnArea");
 const breakScreen = document.getElementById("break");
-let step = 0;
 
-function moveNo(){
-    const pad = 8;
-    const maxX = area.clientWidth - noBtn.offsetWidth - pad;
-    const maxY = area.clientHeight - noBtn.offsetHeight - pad;
-    const pos = [
-        {x:maxX,y:pad},{x:pad,y:pad},
-        {x:maxX,y:maxY},{x:pad,y:maxY}
-    ];
-    noBtn.style.left = pos[step].x+"px";
-    noBtn.style.top  = pos[step].y+"px";
-    step = (step+1)%4;
-}
-noBtn.addEventListener("mouseenter",moveNo);
-noBtn.addEventListener("touchstart",moveNo);
 noBtn.addEventListener("click",()=>{
     breakScreen.style.display="flex";
     setTimeout(()=>breakScreen.style.display="none",1200);
 });
 
 /* =====================
-   CANVAS (DPR SAFE)
+   CANVAS SETUP
 ===================== */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -139,6 +118,7 @@ addEventListener("resize",resize);
 /* =====================
    HEART CONFIG
 ===================== */
+const isMobile = window.innerWidth < 768;
 const INITIAL = isMobile ? 22 : 40;
 const MAX     = isMobile ? 70 : 110;
 const LINK    = isMobile ? 120 : 160;
@@ -147,7 +127,7 @@ const SPEED   = isMobile ? 0.35 : 0.4;
 const hearts = [];
 
 /* =====================
-   VECTOR HEART
+   DRAW HEART
 ===================== */
 function drawHeart(x,y,size,alpha){
     ctx.save();
@@ -190,7 +170,9 @@ class Heart{
     }
 }
 
-/* INIT */
+/* =====================
+   INIT HEARTS
+===================== */
 for(let i=0;i<INITIAL;i++) hearts.push(new Heart());
 
 canvas.addEventListener("click",e=>{
@@ -199,7 +181,7 @@ canvas.addEventListener("click",e=>{
 });
 
 /* =====================
-   ANIMATION
+   ANIMATION LOOP
 ===================== */
 function animate(){
     ctx.clearRect(0,0,innerWidth,innerHeight);
