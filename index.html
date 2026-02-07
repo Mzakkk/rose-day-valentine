@@ -8,7 +8,7 @@
 body{
     margin:0;
     height:100vh;
-    background:#ffe4e9;
+    background:#000;
     font-family:Georgia,serif;
     overflow:hidden;
     display:flex;
@@ -24,8 +24,15 @@ canvas{
     text-align:center;
     z-index:2;
 }
-h1{font-size:36px;color:#c9184a;}
-p{font-size:18px;color:#7a1c2d;margin-bottom:28px;}
+h1{
+    font-size:36px;
+    color:#ff8fab;
+}
+p{
+    font-size:18px;
+    color:#ffd6e0;
+    margin-bottom:28px;
+}
 .buttons{
     position:relative;
     width:320px;
@@ -55,7 +62,7 @@ button{
 #break{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.6);
     display:none;
     justify-content:center;
     align-items:center;
@@ -132,22 +139,22 @@ addEventListener("resize",resize);
 /* =====================
    HEART CONFIG
 ===================== */
-const INITIAL = isMobile ? 14 : 40;
-const MAX     = isMobile ? 50 : 110;
-const LINK    = isMobile ? 90 : 140;
-const SPEED   = isMobile ? 0.18 : 0.4;
+const INITIAL = isMobile ? 22 : 40;
+const MAX     = isMobile ? 70 : 110;
+const LINK    = isMobile ? 120 : 160;
+const SPEED   = isMobile ? 0.35 : 0.4;
 
 const hearts = [];
 
 /* =====================
-   VECTOR HEART DRAW
+   VECTOR HEART
 ===================== */
 function drawHeart(x,y,size,alpha){
     ctx.save();
     ctx.translate(x,y);
     ctx.scale(size,size);
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#ff8fab";
     ctx.beginPath();
     ctx.moveTo(0,0);
     ctx.bezierCurveTo(-0.5,-0.5,-1.5,0.2,0,1.5);
@@ -176,7 +183,7 @@ class Heart{
         if(this.x<0||this.x>innerWidth) this.vx*=-1;
         if(this.y<0||this.y>innerHeight) this.vy*=-1;
 
-        this.alpha = Math.min(1, this.alpha + 0.02);
+        this.alpha = Math.min(1, this.alpha + 0.03);
     }
     draw(){
         drawHeart(this.x,this.y,this.size,this.alpha);
@@ -209,7 +216,8 @@ function animate(){
                 hearts[i].y-hearts[j].y
             );
             if(d < LINK){
-                ctx.strokeStyle="rgba(0,0,0,0.2)";
+                ctx.strokeStyle = "rgba(255,255,255,0.18)";
+                ctx.lineWidth = 0.6;
                 ctx.beginPath();
                 ctx.moveTo(hearts[i].x,hearts[i].y);
                 ctx.lineTo(hearts[j].x,hearts[j].y);
