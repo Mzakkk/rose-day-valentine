@@ -81,9 +81,9 @@ button{
 
 <script>
 /* =====================
-   DEVICE
+   DEVICE CHECK
 ===================== */
-const isMobile = innerWidth < 768;
+const isMobile = window.innerWidth < 768;
 
 /* =====================
    NO BUTTON
@@ -113,92 +113,92 @@ noBtn.addEventListener("click",()=>{
 });
 
 /* =====================
-   CANVAS (DPR FIX)
+   CANVAS SETUP (SAFE)
 ===================== */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
-const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
 function resize(){
-    canvas.width = innerWidth * dpr;
-    canvas.height = innerHeight * dpr;
-    canvas.style.width = innerWidth+"px";
-    canvas.style.height = innerHeight+"px";
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 resize();
-addEventListener("resize",resize);
+window.addEventListener("resize", resize);
 
 /* =====================
-   HEART SYSTEM
+   HEART CONFIG
 ===================== */
-const INITIAL = isMobile ? 16 : 50;
-const MAX     = isMobile ? 55 : 120;
-const LINK    = isMobile ? 80 : 130;
-const SPEED   = isMobile ? 0.18 : 0.4;
+const INITIAL_HEARTS = isMobile ? 15 : 40;
+const MAX_HEARTS     = isMobile ? 50 : 110;
+const LINK_DISTANCE  = isMobile ? 80 : 130;
+const SPEED          = isMobile ? 0.15 : 0.35;
 
 const hearts = [];
-let frame = 0;
 
+/* =====================
+   HEART CLASS
+===================== */
 class Heart{
     constructor(x,y){
-        this.x = x ?? Math.random()*innerWidth;
-        this.y = y ?? Math.random()*innerHeight;
+        this.x = x ?? Math.random()*canvas.width;
+        this.y = y ?? Math.random()*canvas.height;
         this.vx = (Math.random()-0.5)*SPEED;
         this.vy = (Math.random()-0.5)*SPEED;
         this.alpha = 0;
     }
-    move(){
-        this.vx *= 0.995;  // easing
-        this.vy *= 0.995;
+    update(){
         this.x += this.vx;
         this.y += this.vy;
-        if(this.x<0||this.x>innerWidth) this.vx*=-1;
-        if(this.y<0||this.y>innerHeight) this.vy*=-1;
-        this.alpha = Math.min(1,this.alpha+0.025);
+
+        if(this.x<0||this.x>canvas.width) this.vx*=-1;
+        if(this.y<0||this.y>canvas.height) this.vy*=-1;
+
+        if(this.alpha < 1) this.alpha += 0.02;
     }
     draw(){
         ctx.globalAlpha = this.alpha;
         ctx.font = "12px serif";
-        ctx.fillText("🖤",this.x,this.y);
+        ctx.fillText("🖤", this.x, this.y);
         ctx.globalAlpha = 1;
     }
 }
 
-for(let i=0;i<INITIAL;i++) hearts.push(new Heart());
+/* INIT HEARTS */
+for(let i=0;i<INITIAL_HEARTS;i++){
+    hearts.push(new Heart());
+}
 
-canvas.addEventListener("click",e=>{
-    if(hearts.length>=MAX) return;
-    hearts.push(new Heart(e.clientX,e.clientY));
+/* =====================
+   CLICK → ADD HEART
+===================== */
+canvas.addEventListener("click", e=>{
+    if(hearts.length >= MAX_HEARTS) return;
+    hearts.push(new Heart(e.clientX, e.clientY));
 });
 
 /* =====================
    ANIMATION LOOP
 ===================== */
 function animate(){
-    frame++;
-    ctx.clearRect(0,0,innerWidth,innerHeight);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
     hearts.forEach(h=>{
-        h.move();
+        h.update();
         h.draw();
     });
 
-    /* draw lines every 2nd frame on mobile */
-    if(!isMobile || frame%2===0){
-        for(let i=0;i<hearts.length;i++){
-            for(let j=i+1;j<hearts.length;j++){
-                const d = Math.hypot(
-                    hearts[i].x-hearts[j].x,
-                    hearts[i].y-hearts[j].y
-                );
-                if(d<LINK){
-                    ctx.strokeStyle="rgba(0,0,0,0.15)";
-                    ctx.beginPath();
-                    ctx.moveTo(hearts[i].x,hearts[i].y);
-                    ctx.lineTo(hearts[j].x,hearts[j].y);
-                    ctx.stroke();
-                }
+    for(let i=0;i<hearts.length;i++){
+        for(let j=i+1;j<hearts.length;j++){
+            const d = Math.hypot(
+                hearts[i].x - hearts[j].x,
+                hearts[i].y - hearts[j].y
+            );
+            if(d < LINK_DISTANCE){
+                ctx.strokeStyle = "rgba(0,0,0,0.15)";
+                ctx.beginPath();
+                ctx.moveTo(hearts[i].x, hearts[i].y);
+                ctx.lineTo(hearts[j].x, hearts[j].y);
+                ctx.stroke();
             }
         }
     }
@@ -206,6 +206,7 @@ function animate(){
 }
 animate();
 
+/* ===================== */
 function goYes(){
     location.href="rose.html";
 }
