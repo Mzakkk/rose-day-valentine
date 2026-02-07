@@ -3,6 +3,7 @@
 <head>
 <title>RIYA ❤️ Valentine</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{
     margin:0;
@@ -15,19 +16,15 @@ body{
     align-items:center;
 }
 
-/* Floating hearts */
-.heart{
-    position:absolute;
-    bottom:-40px;
-    font-size:28px;
-    opacity:0.55;
-    animation:floatUp 14s linear infinite;
-}
-@keyframes floatUp{
-    from{transform:translateY(0); opacity:0.6;}
-    to{transform:translateY(-130vh); opacity:0;}
+/* Canvas background */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:0;
 }
 
+/* Content */
 .container{
     text-align:center;
     z-index:2;
@@ -45,7 +42,7 @@ p{
     margin-bottom:35px;
 }
 
-/* Button area */
+/* Buttons */
 .buttons{
     position:relative;
     width:360px;
@@ -80,11 +77,7 @@ button{
 
 <body>
 
-<!-- Hearts -->
-<span class="heart" style="left:10%;">❤️</span>
-<span class="heart" style="left:30%; animation-delay:4s;">💖</span>
-<span class="heart" style="left:50%; animation-delay:7s;">❤️</span>
-<span class="heart" style="left:70%; animation-delay:2s;">💘</span>
+<canvas id="bg"></canvas>
 
 <div class="container">
     <h1>RIYA, will you be my Valentine? 🌹</h1>
@@ -97,31 +90,102 @@ button{
 </div>
 
 <script>
+/* =========================
+   NO BUTTON ESCAPE
+========================= */
 const noBtn = document.getElementById("noBtn");
 const area = document.querySelector(".buttons");
 
-function escapeSafe(){
+function escapeFast(){
     const padding = 10;
-
-    const minX = area.offsetWidth / 2;
     const maxX = area.offsetWidth - noBtn.offsetWidth - padding;
-
-    const minY = padding;
     const maxY = area.offsetHeight - noBtn.offsetHeight - padding;
 
-    const x = Math.random() * (maxX - minX) + minX;
-    const y = Math.random() * (maxY - minY) + minY;
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top  = Math.random() * maxY + "px";
 }
 
-noBtn.addEventListener("mouseenter", escapeSafe);
-noBtn.addEventListener("touchstart", escapeSafe);
+noBtn.addEventListener("mouseenter", escapeFast);
+noBtn.addEventListener("touchstart", escapeFast);
 
+/* =========================
+   CANVAS HEART PARTICLES
+========================= */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const hearts = [];
+const HEART_COUNT = 45;
+const LINK_DISTANCE = 120;
+
+class Heart{
+    constructor(){
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+        this.vx = (Math.random()-0.5)*0.6;
+        this.vy = (Math.random()-0.5)*0.6;
+        this.size = 10;
+        this.active = false;
+    }
+    draw(){
+        ctx.font = this.size+"px serif";
+        ctx.fillText("💗", this.x, this.y);
+    }
+    move(){
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if(this.x<0||this.x>canvas.width) this.vx*=-1;
+        if(this.y<0||this.y>canvas.height) this.vy*=-1;
+    }
+}
+
+for(let i=0;i<HEART_COUNT;i++) hearts.push(new Heart());
+
+canvas.addEventListener("click", e=>{
+    hearts.forEach(h=>{
+        const d = Math.hypot(h.x-e.clientX, h.y-e.clientY);
+        h.active = d < 30;
+    });
+});
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    hearts.forEach(h=>{
+        h.move();
+        h.draw();
+    });
+
+    hearts.forEach(a=>{
+        hearts.forEach(b=>{
+            const d = Math.hypot(a.x-b.x, a.y-b.y);
+            if(a.active && d < LINK_DISTANCE){
+                ctx.strokeStyle = "rgba(255,182,193,0.4)";
+                ctx.beginPath();
+                ctx.moveTo(a.x,a.y);
+                ctx.lineTo(b.x,b.y);
+                ctx.stroke();
+            }
+        });
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+
+/* ========================= */
 function goYes(){
     window.location.href = "rose.html";
 }
 </script>
 
-</b
+</body>
+</html>
