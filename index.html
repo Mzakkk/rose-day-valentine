@@ -72,12 +72,26 @@ button{
     right:0;
     top:60px;
 }
+
+/* Broken heart overlay */
+#break{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    font-size:120px;
+    z-index:5;
+}
 </style>
 </head>
 
 <body>
 
 <canvas id="bg"></canvas>
+
+<div id="break">💔</div>
 
 <div class="container">
     <h1>RIYA, will you be my Valentine? 🌹</h1>
@@ -91,72 +105,87 @@ button{
 
 <script>
 /* =========================
-   NO BUTTON SEQUENTIAL ESCAPE
+   NO BUTTON ESCAPE + BREAK
 ========================= */
 const noBtn = document.getElementById("noBtn");
 const area = document.getElementById("btnArea");
+const breakScreen = document.getElementById("break");
 
-let step = 0; // controls movement order
+let step = 0;
 
-function moveNoButton(){
+function moveNo(){
     const pad = 10;
     const maxX = area.clientWidth - noBtn.offsetWidth - pad;
     const maxY = area.clientHeight - noBtn.offsetHeight - pad;
 
-    const positions = [
-        { x: maxX, y: pad },        // top-right
-        { x: pad,  y: pad },        // top-left
-        { x: maxX, y: maxY },       // bottom-right
-        { x: pad,  y: maxY }        // bottom-left
+    const pos = [
+        {x:maxX, y:pad},
+        {x:pad,  y:pad},
+        {x:maxX, y:maxY},
+        {x:pad,  y:maxY}
     ];
 
-    noBtn.style.left = positions[step].x + "px";
-    noBtn.style.top  = positions[step].y + "px";
-
-    step = (step + 1) % positions.length; // loop
+    noBtn.style.left = pos[step].x + "px";
+    noBtn.style.top  = pos[step].y + "px";
+    step = (step + 1) % pos.length;
 }
 
-noBtn.addEventListener("mouseenter", moveNoButton);
-noBtn.addEventListener("touchstart", moveNoButton);
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("touchstart", moveNo);
+
+noBtn.addEventListener("click", () => {
+    breakScreen.style.display = "flex";
+    setTimeout(()=>breakScreen.style.display="none",1500);
+});
 
 /* =========================
-   BLACK HEARTS + LINES
+   BLACK HEARTS + MULTIPLY
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
 function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 }
 resize();
-window.addEventListener("resize", resize);
+addEventListener("resize", resize);
 
 const hearts = [];
-const HEART_COUNT = 50;
 const LINK_DISTANCE = 140;
 
 class Heart{
-    constructor(){
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
+    constructor(x,y){
+        this.x = x ?? Math.random()*canvas.width;
+        this.y = y ?? Math.random()*canvas.height;
+        this.vx = (Math.random()-0.5)*0.5;
+        this.vy = (Math.random()-0.5)*0.5;
         this.size = 12;
     }
     move(){
         this.x += this.vx;
         this.y += this.vy;
-        if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        if(this.x<0||this.x>canvas.width) this.vx*=-1;
+        if(this.y<0||this.y>canvas.height) this.vy*=-1;
     }
     draw(){
-        ctx.font = this.size + "px serif";
-        ctx.fillText("🖤", this.x, this.y);
+        ctx.font = this.size+"px serif";
+        ctx.fillText("🖤",this.x,this.y);
     }
 }
 
-for(let i=0;i<HEART_COUNT;i++) hearts.push(new Heart());
+for(let i=0;i<50;i++) hearts.push(new Heart());
+
+canvas.addEventListener("click", e=>{
+    hearts.forEach(h=>{
+        const d = Math.hypot(h.x-e.clientX,h.y-e.clientY);
+        if(d < 25){
+            for(let i=0;i<3;i++){
+                hearts.push(new Heart(h.x,h.y));
+            }
+        }
+    });
+});
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -168,15 +197,15 @@ function animate(){
 
     for(let i=0;i<hearts.length;i++){
         for(let j=i+1;j<hearts.length;j++){
-            const dx = hearts[i].x - hearts[j].x;
-            const dy = hearts[i].y - hearts[j].y;
-            const d = Math.sqrt(dx*dx + dy*dy);
-
-            if(d < LINK_DISTANCE){
-                ctx.strokeStyle = "rgba(0,0,0,0.25)";
+            const d = Math.hypot(
+                hearts[i].x-hearts[j].x,
+                hearts[i].y-hearts[j].y
+            );
+            if(d<LINK_DISTANCE){
+                ctx.strokeStyle="rgba(0,0,0,0.25)";
                 ctx.beginPath();
-                ctx.moveTo(hearts[i].x, hearts[i].y);
-                ctx.lineTo(hearts[j].x, hearts[j].y);
+                ctx.moveTo(hearts[i].x,hearts[i].y);
+                ctx.lineTo(hearts[j].x,hearts[j].y);
                 ctx.stroke();
             }
         }
@@ -187,7 +216,7 @@ animate();
 
 /* ========================= */
 function goYes(){
-    window.location.href = "rose.html";
+    location.href="rose.html";
 }
 </script>
 
