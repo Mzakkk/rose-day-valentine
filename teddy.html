@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Teddy Day 🧸</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    font-family:Georgia,serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#f6c1cc,#fbe4ea);
+    overflow:hidden;
+}
+
+/* CARD */
+.card{
+    background:#fff;
+    padding:42px 34px 60px;
+    border-radius:30px;
+    text-align:center;
+    max-width:520px;
+    width:90%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.12);
+}
+
+/* TEXT */
+h1{
+    font-size:34px;
+    color:#a0183a;
+    margin-bottom:18px;
+}
+
+p{
+    font-size:20px;
+    color:#6d1020;
+    line-height:1.6;
+}
+
+/* TEDDY */
+.teddy{
+    font-size:90px;
+    margin:25px 0;
+    animation:bounce 2.8s ease-in-out infinite;
+    cursor:pointer;
+}
+
+@keyframes bounce{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+    100%{transform:translateY(0);}
+}
+
+.teddy.hug{
+    animation:hug 1.5s ease-in-out infinite;
+}
+
+@keyframes hug{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
+}
+
+/* BUTTON */
+button{
+    padding:14px 34px;
+    font-size:18px;
+    border:none;
+    border-radius:30px;
+    background:#e85b7f;
+    color:white;
+    cursor:pointer;
+}
+
+/* MESSAGE */
+.message{
+    display:none;
+    margin-top:20px;
+    font-size:22px;
+    color:#8b0e1a;
+}
+
+/* TIMER */
+.timerBox{
+    margin-top:30px;
+    padding:18px;
+    border-radius:20px;
+    background:#fdecef;
+}
+
+#countdown{
+    font-size:18px;
+    margin-bottom:10px;
+    color:#8b0e1a;
+}
+
+.nextBtn{
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    background:#bbb;
+    color:#555;
+    cursor:not-allowed;
+}
+
+.nextBtn.unlocked{
+    background:#e85b7f;
+    color:white;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>Happy Teddy Day, RIYA 🧸</h1>
+
+    <p>
+        If I could, I’d wrap you in the warmest hug
+        and never let go.
+    </p>
+
+    <div class="teddy" id="teddy" onclick="hugTeddy()">🧸</div>
+
+    <button onclick="hugTeddy()">Hug Teddy 🤗</button>
+
+    <div class="message" id="msg">
+        This hug carries everything I feel for you ❤️
+    </div>
+
+    <div class="timerBox">
+        <div id="countdown">🔒 Unlocks on Promise Day</div>
+        <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
+    </div>
+
+</div>
+
+<script>
+/* HUG INTERACTION */
+function hugTeddy(){
+    const t=document.getElementById("teddy");
+    t.classList.add("hug");
+    document.getElementById("msg").style.display="block";
+}
+
+/* TIMER */
+const TEST_MODE=false;
+const targetDate = TEST_MODE
+    ? new Date(Date.now()+5000)
+    : new Date("2026-02-11T00:00:00");
+
+const countdownEl=document.getElementById("countdown");
+const nextBtn=document.getElementById("nextBtn");
+
+function updateTimer(){
+    const diff = targetDate - new Date();
+
+    if(diff<=0){
+        countdownEl.innerHTML="💍 It’s Promise Day 💍";
+        nextBtn.disabled=false;
+        nextBtn.classList.add("unlocked");
+        nextBtn.innerText="Next ➜";
+        return;
+    }
+
+    const h=Math.floor(diff/3600000);
+    const m=Math.floor((diff/60000)%60);
+    const s=Math.floor((diff/1000)%60);
+
+    countdownEl.innerHTML=`🔒 Unlocks in ${h}h ${m}m ${s}s`;
+}
+
+setInterval(updateTimer,1000);
+updateTimer();
+
+nextBtn.onclick=()=>{
+    if(!nextBtn.disabled){
+        window.location.href="promise.html";
+    }
+};
+</script>
+
+</body>
+</html>
