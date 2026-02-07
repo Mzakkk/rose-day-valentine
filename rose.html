@@ -7,12 +7,12 @@
 body{
     margin:0;
     height:100vh;
-    background:linear-gradient(135deg,#ffb3c6,#ffe5ec);
     font-family:Georgia,serif;
     overflow:hidden;
     display:flex;
     justify-content:center;
     align-items:center;
+    background:linear-gradient(135deg,#ffb3c6,#ffe5ec);
     animation:bgMove 10s ease infinite alternate;
 }
 @keyframes bgMove{
@@ -20,20 +20,20 @@ body{
     to{background-position:100%;}
 }
 
-/* floating hearts */
+/* Floating hearts */
 .heart{
     position:absolute;
-    bottom:-30px;
-    font-size:24px;
-    opacity:0.4;
-    animation:floatUp 14s linear infinite;
+    bottom:-40px;
+    font-size:26px;
+    opacity:0.45;
+    animation:floatUp 16s linear infinite;
 }
 @keyframes floatUp{
-    to{transform:translateY(-120vh); opacity:0;}
+    to{transform:translateY(-130vh); opacity:0;}
 }
 
 .card{
-    background:rgba(255,255,255,0.7);
+    background:rgba(255,255,255,0.75);
     padding:40px 30px;
     border-radius:30px;
     text-align:center;
@@ -53,9 +53,10 @@ p{
     margin-bottom:40px;
 }
 
+/* Buttons */
 .buttons{
     position:relative;
-    width:360px;
+    width:380px;
     height:90px;
     margin:auto;
 }
@@ -73,21 +74,24 @@ button{
     background:#ff4d6d;
     color:white;
     left:0;
+    top:20px;
 }
 
 .reject{
     background:#ddd;
     color:#333;
     right:0;
+    top:20px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- Hearts -->
 <span class="heart" style="left:15%;">❤️</span>
-<span class="heart" style="left:40%; animation-delay:4s;">💖</span>
-<span class="heart" style="left:65%; animation-delay:7s;">💘</span>
+<span class="heart" style="left:40%; animation-delay:5s;">💖</span>
+<span class="heart" style="left:65%; animation-delay:9s;">💘</span>
 
 <div class="card">
     <h1>Happy Rose Day, RIYA 🌹</h1>
@@ -108,10 +112,19 @@ const reject = document.getElementById("rejectBtn");
 const box = document.querySelector(".buttons");
 
 function escapeInside(){
-    const maxX = box.offsetWidth - reject.offsetWidth;
-    const maxY = box.offsetHeight - reject.offsetHeight;
-    reject.style.left = Math.random() * maxX + "px";
-    reject.style.top = Math.random() * maxY + "px";
+    const padding = 10;
+
+    const minX = box.offsetWidth / 2;
+    const maxX = box.offsetWidth - reject.offsetWidth - padding;
+
+    const minY = padding;
+    const maxY = box.offsetHeight - reject.offsetHeight - padding;
+
+    const x = Math.random() * (maxX - minX) + minX;
+    const y = Math.random() * (maxY - minY) + minY;
+
+    reject.style.left = x + "px";
+    reject.style.top = y + "px";
 }
 
 reject.addEventListener("mouseenter", escapeInside);
