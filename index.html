@@ -16,7 +16,7 @@ body{
     align-items:center;
 }
 
-/* Canvas background */
+/* Canvas */
 canvas{
     position:fixed;
     top:0;
@@ -46,7 +46,7 @@ p{
 .buttons{
     position:relative;
     width:360px;
-    height:90px;
+    height:160px;
     margin:auto;
 }
 
@@ -63,14 +63,14 @@ button{
     background:#ff4d6d;
     color:white;
     left:0;
-    top:20px;
+    top:60px;
 }
 
 .no{
     background:#e0e0e0;
     color:#333;
     right:0;
-    top:20px;
+    top:60px;
 }
 </style>
 </head>
@@ -83,7 +83,7 @@ button{
     <h1>RIYA, will you be my Valentine? 🌹</h1>
     <p>You make my world a little more beautiful every day.</p>
 
-    <div class="buttons">
+    <div class="buttons" id="btnArea">
         <button class="yes" onclick="goYes()">Yes 💖</button>
         <button class="no" id="noBtn">No 🙈</button>
     </div>
@@ -91,25 +91,36 @@ button{
 
 <script>
 /* =========================
-   NO BUTTON ESCAPE
+   NO BUTTON SEQUENTIAL ESCAPE
 ========================= */
 const noBtn = document.getElementById("noBtn");
-const area = document.querySelector(".buttons");
+const area = document.getElementById("btnArea");
 
-function escapeFast(){
-    const padding = 10;
-    const maxX = area.offsetWidth - noBtn.offsetWidth - padding;
-    const maxY = area.offsetHeight - noBtn.offsetHeight - padding;
+let step = 0; // controls movement order
 
-    noBtn.style.left = Math.random() * maxX + "px";
-    noBtn.style.top  = Math.random() * maxY + "px";
+function moveNoButton(){
+    const pad = 10;
+    const maxX = area.clientWidth - noBtn.offsetWidth - pad;
+    const maxY = area.clientHeight - noBtn.offsetHeight - pad;
+
+    const positions = [
+        { x: maxX, y: pad },        // top-right
+        { x: pad,  y: pad },        // top-left
+        { x: maxX, y: maxY },       // bottom-right
+        { x: pad,  y: maxY }        // bottom-left
+    ];
+
+    noBtn.style.left = positions[step].x + "px";
+    noBtn.style.top  = positions[step].y + "px";
+
+    step = (step + 1) % positions.length; // loop
 }
 
-noBtn.addEventListener("mouseenter", escapeFast);
-noBtn.addEventListener("touchstart", escapeFast);
+noBtn.addEventListener("mouseenter", moveNoButton);
+noBtn.addEventListener("touchstart", moveNoButton);
 
 /* =========================
-   CANVAS HEART PARTICLES
+   BLACK HEARTS + LINES
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -122,39 +133,30 @@ resize();
 window.addEventListener("resize", resize);
 
 const hearts = [];
-const HEART_COUNT = 45;
-const LINK_DISTANCE = 120;
+const HEART_COUNT = 50;
+const LINK_DISTANCE = 140;
 
 class Heart{
     constructor(){
-        this.x = Math.random()*canvas.width;
-        this.y = Math.random()*canvas.height;
-        this.vx = (Math.random()-0.5)*0.6;
-        this.vy = (Math.random()-0.5)*0.6;
-        this.size = 10;
-        this.active = false;
-    }
-    draw(){
-        ctx.font = this.size+"px serif";
-        ctx.fillText("💗", this.x, this.y);
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.size = 12;
     }
     move(){
         this.x += this.vx;
         this.y += this.vy;
-
-        if(this.x<0||this.x>canvas.width) this.vx*=-1;
-        if(this.y<0||this.y>canvas.height) this.vy*=-1;
+        if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+    draw(){
+        ctx.font = this.size + "px serif";
+        ctx.fillText("🖤", this.x, this.y);
     }
 }
 
 for(let i=0;i<HEART_COUNT;i++) hearts.push(new Heart());
-
-canvas.addEventListener("click", e=>{
-    hearts.forEach(h=>{
-        const d = Math.hypot(h.x-e.clientX, h.y-e.clientY);
-        h.active = d < 30;
-    });
-});
 
 function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -164,19 +166,21 @@ function animate(){
         h.draw();
     });
 
-    hearts.forEach(a=>{
-        hearts.forEach(b=>{
-            const d = Math.hypot(a.x-b.x, a.y-b.y);
-            if(a.active && d < LINK_DISTANCE){
-                ctx.strokeStyle = "rgba(255,182,193,0.4)";
+    for(let i=0;i<hearts.length;i++){
+        for(let j=i+1;j<hearts.length;j++){
+            const dx = hearts[i].x - hearts[j].x;
+            const dy = hearts[i].y - hearts[j].y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+
+            if(d < LINK_DISTANCE){
+                ctx.strokeStyle = "rgba(0,0,0,0.25)";
                 ctx.beginPath();
-                ctx.moveTo(a.x,a.y);
-                ctx.lineTo(b.x,b.y);
+                ctx.moveTo(hearts[i].x, hearts[i].y);
+                ctx.lineTo(hearts[j].x, hearts[j].y);
                 ctx.stroke();
             }
-        });
-    });
-
+        }
+    }
     requestAnimationFrame(animate);
 }
 animate();
