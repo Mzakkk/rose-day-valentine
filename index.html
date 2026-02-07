@@ -1,6 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RIYA ❤️ Valentine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    background:#ffe4e9;
+    font-family:Georgia,serif;
+    overflow:hidden;
+}
+
+/* Canvas */
+canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+}
+
+/* Content */
+.container{
+    position:relative;
+    z-index:2;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+h1{
+    font-size:40px;
+    color:#c9184a;
+    margin-bottom:15px;
+}
+
+p{
+    font-size:20px;
+    color:#7a1c2d;
+    margin-bottom:40px;
+}
+
+/* Buttons */
+.buttons{
+    position:relative;
+    width:100%;
+    height:120px;
+}
+
+button{
+    padding:14px 36px;
+    font-size:20px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    position:absolute;
+}
+
+.yes{
+    background:#ff4d6d;
+    color:white;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.no{
+    background:#e0e0e0;
+    color:#333;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+    <h1>RIYA, will you be my Valentine? 🌹</h1>
+    <p>You make my world a little more beautiful every day.</p>
+
+    <div class="buttons">
+        <button class="yes" onclick="goYes()">Yes 💖</button>
+        <button class="no" id="noBtn">No 🙈</button>
+    </div>
+</div>
+
 <script>
 /* =========================
-   BLACK HEARTS (SMOOTH + LIMITED)
+   NO BUTTON (LEFT ↔ RIGHT ONLY)
+========================= */
+const noBtn = document.getElementById("noBtn");
+
+function moveNo(){
+    const padding = 20;
+    const topPos = 20;
+
+    if(Math.random() > 0.5){
+        // left corner
+        noBtn.style.left = padding + "px";
+    } else {
+        // right corner
+        noBtn.style.left = (window.innerWidth - noBtn.offsetWidth - padding) + "px";
+    }
+    noBtn.style.top = topPos + "px";
+}
+
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("touchstart", moveNo);
+
+/* =========================
+   SMOOTH HEART NETWORK
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -13,19 +125,19 @@ resize();
 addEventListener("resize", resize);
 
 const hearts = [];
-const INITIAL_HEARTS = 40;
-const MAX_HEARTS = 120;
-const LINK_DISTANCE = 130;
+const INITIAL = 35;
+const MAX = 90;
+const LINK_DISTANCE = 120;
 
 class Heart{
     constructor(x,y){
         this.x = x ?? Math.random()*canvas.width;
         this.y = y ?? Math.random()*canvas.height;
-        this.vx = (Math.random()-0.5)*0.35;   // slower
-        this.vy = (Math.random()-0.5)*0.35;
+        this.vx = (Math.random()-0.5)*0.25;
+        this.vy = (Math.random()-0.5)*0.25;
         this.size = 12;
-        this.alpha = 0;                       // fade-in
-        this.cooldown = false;                // prevent spam
+        this.alpha = 0;
+        this.cooldown = false;
     }
 
     move(){
@@ -35,32 +147,28 @@ class Heart{
         if(this.x<0||this.x>canvas.width) this.vx*=-1;
         if(this.y<0||this.y>canvas.height) this.vy*=-1;
 
-        if(this.alpha < 1) this.alpha += 0.02;
+        if(this.alpha < 1) this.alpha += 0.01;
     }
 
     draw(){
         ctx.globalAlpha = this.alpha;
         ctx.font = this.size+"px serif";
-        ctx.fillText("🖤", this.x, this.y);
+        ctx.fillText("🖤",this.x,this.y);
         ctx.globalAlpha = 1;
     }
 }
 
-// initial hearts
-for(let i=0;i<INITIAL_HEARTS;i++) hearts.push(new Heart());
+for(let i=0;i<INITIAL;i++) hearts.push(new Heart());
 
 canvas.addEventListener("click", e=>{
-    if(hearts.length >= MAX_HEARTS) return;
+    if(hearts.length >= MAX) return;
 
     hearts.forEach(h=>{
-        const d = Math.hypot(h.x-e.clientX, h.y-e.clientY);
-
-        if(d < 25 && !h.cooldown){
-            hearts.push(new Heart(h.x, h.y));
+        const d = Math.hypot(h.x-e.clientX,h.y-e.clientY);
+        if(d < 22 && !h.cooldown){
+            hearts.push(new Heart(h.x,h.y));
             h.cooldown = true;
-
-            // reset cooldown
-            setTimeout(()=>h.cooldown=false,600);
+            setTimeout(()=>h.cooldown=false,1200);
         }
     });
 });
@@ -79,18 +187,24 @@ function animate(){
                 hearts[i].x-hearts[j].x,
                 hearts[i].y-hearts[j].y
             );
-
             if(d < LINK_DISTANCE){
-                ctx.strokeStyle = "rgba(0,0,0,0.15)";
+                ctx.strokeStyle = "rgba(0,0,0,0.12)";
                 ctx.beginPath();
-                ctx.moveTo(hearts[i].x, hearts[i].y);
-                ctx.lineTo(hearts[j].x, hearts[j].y);
+                ctx.moveTo(hearts[i].x,hearts[i].y);
+                ctx.lineTo(hearts[j].x,hearts[j].y);
                 ctx.stroke();
             }
         }
     }
-
     requestAnimationFrame(animate);
 }
 animate();
+
+/* ========================= */
+function goYes(){
+    window.location.href = "rose.html";
+}
 </script>
+
+</body>
+</html>
