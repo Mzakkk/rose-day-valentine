@@ -7,59 +7,103 @@
 body{
     margin:0;
     height:100vh;
-    background:url('bg.jpg') center/cover no-repeat;
+    background:linear-gradient(135deg,#ffe4e9,#ffd6e0);
+    font-family:'Georgia',serif;
+    overflow:hidden;
     display:flex;
     justify-content:center;
     align-items:center;
-    font-family:Georgia,serif;
-    overflow:hidden;
 }
 
-.overlay{
-    background:rgba(0,0,0,0.45);
-    padding:40px 30px;
-    border-radius:25px;
+/* Floating hearts */
+.heart{
+    position:absolute;
+    color:rgba(255,77,109,0.35);
+    font-size:20px;
+    animation:floatUp 8s linear infinite;
+}
+@keyframes floatUp{
+    0%{transform:translateY(100vh); opacity:0;}
+    10%{opacity:1;}
+    100%{transform:translateY(-10vh); opacity:0;}
+}
+
+/* Main content */
+.container{
     text-align:center;
-    color:white;
+    animation:fadeScale 1.5s ease;
+}
+
+@keyframes fadeScale{
+    from{opacity:0; transform:scale(0.9);}
+    to{opacity:1; transform:scale(1);}
 }
 
 h1{
-    font-size:38px;
-    margin-bottom:30px;
+    font-size:42px;
+    color:#c9184a;
+    margin-bottom:20px;
+    animation:glow 2s ease-in-out infinite alternate;
 }
 
+@keyframes glow{
+    from{text-shadow:0 0 5px #ff8fa3;}
+    to{text-shadow:0 0 20px #ff4d6d;}
+}
+
+p{
+    font-size:20px;
+    color:#7a1c2d;
+    margin-bottom:40px;
+}
+
+/* Buttons */
 .buttons{
     position:relative;
-    height:90px;
+    height:110px;
 }
 
 button{
-    padding:14px 30px;
+    padding:14px 36px;
     font-size:20px;
     border:none;
-    border-radius:30px;
+    border-radius:35px;
     cursor:pointer;
     position:absolute;
+    transition:transform 0.2s;
 }
 
 .yes{
     background:#ff4d6d;
     color:white;
-    left:10px;
+    left:35%;
+    box-shadow:0 10px 20px rgba(255,77,109,0.4);
+}
+
+.yes:hover{
+    transform:scale(1.08);
 }
 
 .no{
-    background:#ced4da;
-    color:black;
-    left:160px;
+    background:#e0e0e0;
+    color:#333;
+    left:52%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
+<!-- Floating hearts -->
+<span class="heart" style="left:10%;">❤️</span>
+<span class="heart" style="left:25%; animation-delay:2s;">💖</span>
+<span class="heart" style="left:40%; animation-delay:4s;">❤️</span>
+<span class="heart" style="left:60%; animation-delay:1s;">💘</span>
+<span class="heart" style="left:75%; animation-delay:3s;">❤️</span>
+
+<div class="container">
     <h1>RIYA, will you be my Valentine? 🌹</h1>
+    <p>You make my world a little more beautiful every day.</p>
 
     <div class="buttons">
         <button class="yes" onclick="goYes()">Yes 💖</button>
@@ -70,20 +114,20 @@ button{
 <script>
 const noBtn = document.getElementById("noBtn");
 
-// VERY FAST ESCAPE
-function runAway(){
+// VERY FAST escape
+function escapeFast(){
     const x = Math.random() * (window.innerWidth - 120);
-    const y = Math.random() * (window.innerHeight - 60);
+    const y = Math.random() * (window.innerHeight - 80);
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
 
 // Desktop
-noBtn.addEventListener("mouseover", runAway);
+noBtn.addEventListener("mouseenter", escapeFast);
 // Mobile
-noBtn.addEventListener("touchstart", runAway);
+noBtn.addEventListener("touchstart", escapeFast);
 
-// YES → next page
+// YES
 function goYes(){
     window.location.href = "rose.html";
 }
