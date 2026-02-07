@@ -90,27 +90,29 @@ button{
 
 <script>
 /* =========================
-   NO BUTTON (LEFT ↔ RIGHT)
+   NO BUTTON (LEFT ↔ RIGHT ONLY)
 ========================= */
 const noBtn = document.getElementById("noBtn");
 
 function moveNo(){
     const padding = 20;
-    const y = 20;
+    const topPos = 20;
 
     if(Math.random() > 0.5){
+        // left corner
         noBtn.style.left = padding + "px";
     } else {
-        noBtn.style.left = (innerWidth - noBtn.offsetWidth - padding) + "px";
+        // right corner
+        noBtn.style.left = (window.innerWidth - noBtn.offsetWidth - padding) + "px";
     }
-    noBtn.style.top = y + "px";
+    noBtn.style.top = topPos + "px";
 }
 
 noBtn.addEventListener("mouseenter", moveNo);
 noBtn.addEventListener("touchstart", moveNo);
 
 /* =========================
-   HEART NETWORK (SMOOTH + MULTIPLY)
+   SMOOTH HEART NETWORK
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -124,9 +126,8 @@ addEventListener("resize", resize);
 
 const hearts = [];
 const INITIAL = 35;
-const MAX = 100;
+const MAX = 90;
 const LINK_DISTANCE = 120;
-const CLICK_RADIUS = 40;   // 👈 FIX
 
 class Heart{
     constructor(x,y){
@@ -146,7 +147,7 @@ class Heart{
         if(this.x<0||this.x>canvas.width) this.vx*=-1;
         if(this.y<0||this.y>canvas.height) this.vy*=-1;
 
-        if(this.alpha < 1) this.alpha += 0.015;
+        if(this.alpha < 1) this.alpha += 0.01;
     }
 
     draw(){
@@ -162,28 +163,14 @@ for(let i=0;i<INITIAL;i++) hearts.push(new Heart());
 canvas.addEventListener("click", e=>{
     if(hearts.length >= MAX) return;
 
-    const mx = e.clientX;
-    const my = e.clientY;
-
-    for(const h of hearts){
-        const d = Math.hypot(h.x-mx, h.y-my);
-
-        if(d < CLICK_RADIUS && !h.cooldown){
-            const angle = Math.random() * Math.PI * 2;
-            const offset = 15;
-
-            hearts.push(
-                new Heart(
-                    h.x + Math.cos(angle)*offset,
-                    h.y + Math.sin(angle)*offset
-                )
-            );
-
+    hearts.forEach(h=>{
+        const d = Math.hypot(h.x-e.clientX,h.y-e.clientY);
+        if(d < 22 && !h.cooldown){
+            hearts.push(new Heart(h.x,h.y));
             h.cooldown = true;
-            setTimeout(()=>h.cooldown=false,800);
-            break; // 👈 only ONE heart per click
+            setTimeout(()=>h.cooldown=false,1200);
         }
-    }
+    });
 });
 
 function animate(){
@@ -209,7 +196,6 @@ function animate(){
             }
         }
     }
-
     requestAnimationFrame(animate);
 }
 animate();
