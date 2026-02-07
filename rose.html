@@ -20,7 +20,7 @@ body{
     to{background-position:100%;}
 }
 
-/* Floating hearts */
+/* Floating hearts (initial) */
 .heart{
     position:absolute;
     bottom:-40px;
@@ -32,12 +32,23 @@ body{
     to{transform:translateY(-130vh); opacity:0;}
 }
 
+/* Rose animation (after click) */
+.rose{
+    position:absolute;
+    bottom:-40px;
+    font-size:30px;
+    opacity:0.7;
+    animation:floatUp 10s linear infinite;
+}
+
+/* Card */
 .card{
     background:rgba(255,255,255,0.75);
     padding:40px 30px;
     border-radius:30px;
     text-align:center;
     max-width:520px;
+    z-index:2;
 }
 
 h1{
@@ -56,7 +67,7 @@ p{
 /* Buttons */
 .buttons{
     position:relative;
-    width:380px;
+    width:360px;
     height:90px;
     margin:auto;
 }
@@ -70,7 +81,7 @@ button{
     position:absolute;
 }
 
-.accept{
+.roseBtn{
     background:#ff4d6d;
     color:white;
     left:0;
@@ -83,52 +94,72 @@ button{
     right:0;
     top:20px;
 }
+
+/* Hidden message after rose */
+.finalMessage{
+    display:none;
+    font-size:22px;
+    color:#8b0e1a;
+    margin-top:25px;
+    animation:fadeIn 2s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
 </style>
 </head>
 
 <body>
 
-<!-- Hearts -->
-<span class="heart" style="left:15%;">❤️</span>
-<span class="heart" style="left:40%; animation-delay:5s;">💖</span>
-<span class="heart" style="left:65%; animation-delay:9s;">💘</span>
+<!-- initial hearts -->
+<span class="heart" style="left:20%;">❤️</span>
+<span class="heart" style="left:45%; animation-delay:5s;">💖</span>
+<span class="heart" style="left:70%; animation-delay:9s;">💘</span>
 
-<div class="card">
+<div class="card" id="card">
     <h1>Happy Rose Day, RIYA 🌹</h1>
-    <p>
+
+    <p id="mainText">
         I don’t need a bouquet—having you is enough, baby.
         One look at you makes my heart feel fuller than any
         room filled with roses.
     </p>
 
     <div class="buttons">
-        <button class="accept">Accept my rose 🌹</button>
-        <button class="reject" id="rejectBtn">Reject my rose 🙈</button>
+        <button class="roseBtn" onclick="showRoses()">Rose 🌹</button>
+        <button class="reject" onclick="goBack()">Reject 🙈</button>
+    </div>
+
+    <div class="finalMessage" id="finalMsg">
+        This rose is just a symbol —  
+        my heart already chose you ❤️
     </div>
 </div>
 
 <script>
-const reject = document.getElementById("rejectBtn");
-const box = document.querySelector(".buttons");
+function showRoses(){
+    // hide buttons
+    document.querySelector(".buttons").style.display = "none";
 
-function escapeInside(){
-    const padding = 10;
+    // show final message
+    document.getElementById("finalMsg").style.display = "block";
 
-    const minX = box.offsetWidth / 2;
-    const maxX = box.offsetWidth - reject.offsetWidth - padding;
-
-    const minY = padding;
-    const maxY = box.offsetHeight - reject.offsetHeight - padding;
-
-    const x = Math.random() * (maxX - minX) + minX;
-    const y = Math.random() * (maxY - minY) + minY;
-
-    reject.style.left = x + "px";
-    reject.style.top = y + "px";
+    // create rose animation
+    for(let i=0;i<20;i++){
+        const rose = document.createElement("span");
+        rose.className = "rose";
+        rose.innerHTML = Math.random() > 0.5 ? "🌹" : "🤍🌹";
+        rose.style.left = Math.random() * 100 + "%";
+        rose.style.animationDelay = Math.random() * 5 + "s";
+        document.body.appendChild(rose);
+    }
 }
 
-reject.addEventListener("mouseenter", escapeInside);
-reject.addEventListener("touchstart", escapeInside);
+function goBack(){
+    window.location.href = "index.html";
+}
 </script>
 
 </body>
