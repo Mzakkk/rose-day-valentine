@@ -13,50 +13,53 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#4b2e2b,#7b3f3a);
+    background:linear-gradient(135deg,#3b1f1b,#7a3a2e);
 }
 
 /* =====================
-   BACKGROUND ANIMATION
+   CHOCOLATE SYRUP BG
 ===================== */
-.bg-layer{
+.syrup-layer{
     position:fixed;
     inset:0;
-    overflow:hidden;
     z-index:0;
     pointer-events:none;
+    overflow:hidden;
 }
 
-/* Chocolate bubbles */
-.bubble{
+/* syrup drip */
+.syrup{
     position:absolute;
-    width:26px;
-    height:26px;
+    top:-120px;
+    width:40px;
+    height:280px;
+    background:linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.25),
+        rgba(92,43,33,0.9),
+        rgba(62,25,18,1)
+    );
+    border-radius:0 0 40px 40px;
+    filter:blur(0.4px);
+    animation:drip linear infinite;
+}
+
+/* rounded drip end */
+.syrup::after{
+    content:"";
+    position:absolute;
+    bottom:-18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:44px;
+    height:44px;
+    background:rgba(62,25,18,0.95);
     border-radius:50%;
-    background:rgba(255,255,255,0.12);
-    filter:blur(2px);
-    animation:floatBubble 22s linear infinite;
 }
 
-@keyframes floatBubble{
-    from{transform:translateY(110vh) scale(0.8);}
-    to{transform:translateY(-140vh) scale(1.2);}
-}
-
-/* Chocolate strips */
-.strip{
-    position:absolute;
-    width:120px;
-    height:6px;
-    background:rgba(90,31,22,0.25);
-    border-radius:10px;
-    filter:blur(1px);
-    animation:driftStrip 26s linear infinite;
-}
-
-@keyframes driftStrip{
-    from{transform:translate(-20vw,120vh) rotate(12deg);}
-    to{transform:translate(120vw,-140vh) rotate(12deg);}
+@keyframes drip{
+    from{transform:translateY(-140px);}
+    to{transform:translateY(120vh);}
 }
 
 /* Floating chocolates on click */
@@ -77,7 +80,7 @@ body{
    CARD
 ===================== */
 .card{
-    background:rgba(255,255,255,0.92);
+    background:rgba(255,255,255,0.94);
     padding:42px 34px;
     border-radius:30px;
     text-align:center;
@@ -164,8 +167,8 @@ button{
 
 <body>
 
-<!-- BACKGROUND ANIMATION LAYER -->
-<div class="bg-layer" id="bg"></div>
+<!-- CHOCOLATE SYRUP BACKGROUND -->
+<div class="syrup-layer" id="syrupLayer"></div>
 
 <div class="card">
 
@@ -194,26 +197,16 @@ button{
 </div>
 
 <script>
-/* BACKGROUND ELEMENTS */
-const bg=document.getElementById("bg");
+/* CREATE SYRUP DRIPS */
+const syrupLayer=document.getElementById("syrupLayer");
 
-// bubbles
-for(let i=0;i<18;i++){
-    const b=document.createElement("div");
-    b.className="bubble";
-    b.style.left=Math.random()*100+"%";
-    b.style.animationDelay=Math.random()*20+"s";
-    b.style.opacity=Math.random()*0.15+0.05;
-    bg.appendChild(b);
-}
-
-// chocolate strips
 for(let i=0;i<6;i++){
     const s=document.createElement("div");
-    s.className="strip";
-    s.style.top=Math.random()*100+"%";
-    s.style.animationDelay=Math.random()*25+"s";
-    bg.appendChild(s);
+    s.className="syrup";
+    s.style.left = (i*16 + Math.random()*6) + "%";
+    s.style.animationDuration = (18 + Math.random()*10) + "s";
+    s.style.opacity = Math.random()*0.4 + 0.35;
+    syrupLayer.appendChild(s);
 }
 
 /* CLICK EFFECT */
