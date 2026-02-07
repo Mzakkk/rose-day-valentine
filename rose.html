@@ -1,164 +1,235 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>For RIYA 🌹</title>
+<title>Propose Day 💍</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
+/* =====================
+   BASE + HEARTBEAT BG
+===================== */
 body{
     margin:0;
     height:100vh;
     font-family:Georgia,serif;
-    overflow:hidden;
+    background:#0b0b0b;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#ffb3c6,#ffe5ec);
-    animation:bgMove 10s ease infinite alternate;
-}
-@keyframes bgMove{
-    from{background-position:0%;}
-    to{background-position:100%;}
+    overflow:hidden;
+    color:#fff;
 }
 
-/* Floating hearts (initial) */
-.heart{
-    position:absolute;
-    bottom:-40px;
-    font-size:26px;
-    opacity:0.45;
-    animation:floatUp 16s linear infinite;
-}
-@keyframes floatUp{
-    to{transform:translateY(-130vh); opacity:0;}
-}
-
-/* Rose animation (after click) */
-.rose{
-    position:absolute;
-    bottom:-40px;
-    font-size:30px;
-    opacity:0.7;
-    animation:floatUp 10s linear infinite;
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at center,
+        rgba(255,77,109,0.25),
+        rgba(0,0,0,0.95) 70%);
+    animation:heartbeat 2.2s ease-in-out infinite;
+    z-index:-1;
 }
 
-/* Card */
-.card{
-    background:rgba(255,255,255,0.75);
-    padding:40px 30px;
-    border-radius:30px;
+@keyframes heartbeat{
+    0%{transform:scale(1); opacity:0.55;}
+    20%{transform:scale(1.03); opacity:0.75;}
+    40%{transform:scale(1); opacity:0.6;}
+    60%{transform:scale(1.05); opacity:0.85;}
+    100%{transform:scale(1); opacity:0.55;}
+}
+
+/* =====================
+   LAYOUT
+===================== */
+.container{
     text-align:center;
-    max-width:520px;
-    z-index:2;
+    max-width:720px;
+    padding:30px;
 }
 
 h1{
-    font-size:34px;
-    color:#b5172e;
-    margin-bottom:25px;
+    font-size:38px;
+    color:#ff8fab;
+    margin-bottom:20px;
+    animation:fadeIn 2s forwards;
 }
 
 p{
     font-size:20px;
-    color:#6d1020;
     line-height:1.6;
-    margin-bottom:40px;
-}
-
-/* Buttons */
-.buttons{
-    position:relative;
-    width:360px;
-    height:90px;
-    margin:auto;
+    opacity:0;
+    animation:fadeIn 2s forwards;
+    animation-delay:1s;
 }
 
 button{
-    padding:14px 30px;
+    margin-top:30px;
+    padding:14px 36px;
     font-size:18px;
     border:none;
     border-radius:30px;
-    cursor:pointer;
-    position:absolute;
-}
-
-.roseBtn{
     background:#ff4d6d;
     color:white;
-    left:0;
-    top:20px;
+    cursor:pointer;
 }
 
-.reject{
-    background:#ddd;
-    color:#333;
-    right:0;
-    top:20px;
-}
-
-/* Hidden message after rose */
-.finalMessage{
+/* =====================
+   SCENE
+===================== */
+.scene{
     display:none;
-    font-size:22px;
-    color:#8b0e1a;
-    margin-top:25px;
-    animation:fadeIn 2s ease;
+    margin-top:45px;
+}
+
+.person{
+    font-size:90px;
+    opacity:0;
+    animation:kneel 2s forwards;
+}
+
+.ring{
+    font-size:65px;
+    margin-top:10px;
+    opacity:0;
+    transform:scale(0.3);
+    animation:ringOpen 2s forwards;
+    animation-delay:2s;
+}
+
+.question{
+    margin-top:30px;
+    font-size:26px;
+    color:#ffd6e0;
+    opacity:0;
+    animation:fadeIn 2s forwards;
+    animation-delay:4s;
+}
+
+/* =====================
+   RESPONSE
+===================== */
+.response{
+    display:none;
+    margin-top:30px;
+}
+
+.response button{
+    margin:12px;
+}
+
+.yesBtn{background:#ff4d6d;}
+.noBtn{background:#666;}
+
+.result{
+    display:none;
+    margin-top:35px;
+    font-size:34px;
+    animation:fadeIn 2s forwards;
+}
+
+.ringResult{
+    font-size:80px;
+    animation:pop 1.5s ease infinite alternate;
+}
+
+.heartBreak{
+    font-size:80px;
+    animation:shake 0.6s infinite;
+}
+
+/* =====================
+   ANIMATIONS
+===================== */
+@keyframes kneel{
+    from{opacity:0; transform:translateY(-40px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes ringOpen{
+    to{opacity:1; transform:scale(1);}
 }
 
 @keyframes fadeIn{
-    from{opacity:0;}
     to{opacity:1;}
+}
+
+@keyframes pop{
+    to{transform:scale(1.15);}
+}
+
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    50%{transform:translateX(6px);}
+    75%{transform:translateX(-6px);}
+    100%{transform:translateX(0);}
 }
 </style>
 </head>
 
 <body>
 
-<!-- initial hearts -->
-<span class="heart" style="left:20%;">❤️</span>
-<span class="heart" style="left:45%; animation-delay:5s;">💖</span>
-<span class="heart" style="left:70%; animation-delay:9s;">💘</span>
+<div class="container">
 
-<div class="card" id="card">
-    <h1>Happy Rose Day, RIYA 🌹</h1>
+    <h1>RIYA ❤️</h1>
 
-    <p id="mainText">
-        I don’t need a bouquet—having you is enough, baby.
-        One look at you makes my heart feel fuller than any
-        room filled with roses.
+    <p>
+        Today I’m not asking casually.  
+        I’m asking with my whole heart,
+        with all the courage I have.
     </p>
 
-    <div class="buttons">
-        <button class="roseBtn" onclick="showRoses()">Rose 🌹</button>
-        <button class="reject" onclick="goBack()">Reject 🙈</button>
+    <button id="startBtn" onclick="startProposal()">
+        Take a step closer 💗
+    </button>
+
+    <!-- PROPOSAL SCENE -->
+    <div class="scene" id="scene">
+        <div class="person">🧎‍♂️</div>
+        <div class="ring">💍</div>
+
+        <div class="question">
+            Will you be mine — today and always?
+        </div>
+
+        <div class="response" id="response">
+            <button class="yesBtn" onclick="sayYes()">Yes ❤️</button>
+            <button class="noBtn" onclick="sayNo()">No 🙈</button>
+        </div>
+
+        <div class="result" id="yesResult">
+            <div class="ringResult">💍✨</div>
+            <div>Forever begins here ❤️</div>
+        </div>
+
+        <div class="result" id="noResult">
+            <div class="heartBreak">💔</div>
+            <div>I’ll still wish you happiness 🤍</div>
+        </div>
     </div>
 
-    <div class="finalMessage" id="finalMsg">
-        This rose is just a symbol —  
-        my heart already chose you ❤️
-    </div>
 </div>
 
 <script>
-function showRoses(){
-    // hide buttons
-    document.querySelector(".buttons").style.display = "none";
+function startProposal(){
+    document.getElementById("startBtn").style.display="none";
+    const scene=document.getElementById("scene");
+    scene.style.display="block";
 
-    // show final message
-    document.getElementById("finalMsg").style.display = "block";
-
-    // create rose animation
-    for(let i=0;i<20;i++){
-        const rose = document.createElement("span");
-        rose.className = "rose";
-        rose.innerHTML = Math.random() > 0.5 ? "🌹" : "🤍🌹";
-        rose.style.left = Math.random() * 100 + "%";
-        rose.style.animationDelay = Math.random() * 5 + "s";
-        document.body.appendChild(rose);
-    }
+    setTimeout(()=>{
+        document.getElementById("response").style.display="block";
+    },4500);
 }
 
-function goBack(){
-    window.location.href = "index.html";
+function sayYes(){
+    document.getElementById("response").style.display="none";
+    document.getElementById("yesResult").style.display="block";
+}
+
+function sayNo(){
+    document.getElementById("response").style.display="none";
+    document.getElementById("noResult").style.display="block";
 }
 </script>
 
