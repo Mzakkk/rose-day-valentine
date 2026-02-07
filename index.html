@@ -15,66 +15,43 @@ body{
     justify-content:center;
     align-items:center;
 }
-
-/* Canvas */
 canvas{
     position:fixed;
-    top:0;
-    left:0;
+    inset:0;
     z-index:0;
 }
-
-/* Content */
 .container{
     text-align:center;
     z-index:2;
 }
-
-h1{
-    font-size:40px;
-    color:#c9184a;
-    margin-bottom:18px;
-}
-
-p{
-    font-size:20px;
-    color:#7a1c2d;
-    margin-bottom:35px;
-}
-
-/* Buttons */
+h1{font-size:36px;color:#c9184a;}
+p{font-size:18px;color:#7a1c2d;margin-bottom:28px;}
 .buttons{
     position:relative;
-    width:360px;
-    height:160px;
-    margin:auto;
+    width:320px;
+    height:140px;
 }
-
 button{
-    padding:14px 34px;
-    font-size:20px;
+    padding:14px 30px;
+    font-size:18px;
     border:none;
     border-radius:30px;
     cursor:pointer;
     position:absolute;
 }
-
 .yes{
     background:#ff4d6d;
     color:white;
     left:50%;
     transform:translateX(-50%);
-    top:60px;
+    top:50px;
 }
-
 .no{
     background:#e0e0e0;
     color:#333;
     right:0;
-    top:60px;
+    top:50px;
 }
-
-/* Broken heart overlay */
 #break{
     position:fixed;
     inset:0;
@@ -82,7 +59,7 @@ button{
     display:none;
     justify-content:center;
     align-items:center;
-    font-size:120px;
+    font-size:100px;
     z-index:5;
 }
 </style>
@@ -91,13 +68,11 @@ button{
 <body>
 
 <canvas id="bg"></canvas>
-
 <div id="break">💔</div>
 
 <div class="container">
     <h1>RIYA, will you be my Valentine? 🌹</h1>
     <p>You make my world a little more beautiful every day.</p>
-
     <div class="buttons" id="btnArea">
         <button class="yes" onclick="goYes()">Yes 💖</button>
         <button class="no" id="noBtn">No 🙈</button>
@@ -105,120 +80,125 @@ button{
 </div>
 
 <script>
-/* =========================
-   NO BUTTON ESCAPE + BREAK
-========================= */
+/* =====================
+   DEVICE
+===================== */
+const isMobile = innerWidth < 768;
+
+/* =====================
+   NO BUTTON
+===================== */
 const noBtn = document.getElementById("noBtn");
 const area = document.getElementById("btnArea");
 const breakScreen = document.getElementById("break");
-
 let step = 0;
 
 function moveNo(){
-    const pad = 10;
+    const pad = 8;
     const maxX = area.clientWidth - noBtn.offsetWidth - pad;
     const maxY = area.clientHeight - noBtn.offsetHeight - pad;
-
     const pos = [
-        {x:maxX, y:pad},
-        {x:pad,  y:pad},
-        {x:maxX, y:maxY},
-        {x:pad,  y:maxY}
+        {x:maxX,y:pad},{x:pad,y:pad},
+        {x:maxX,y:maxY},{x:pad,y:maxY}
     ];
-
-    noBtn.style.left = pos[step].x + "px";
-    noBtn.style.top  = pos[step].y + "px";
-    step = (step + 1) % pos.length;
+    noBtn.style.left = pos[step].x+"px";
+    noBtn.style.top  = pos[step].y+"px";
+    step = (step+1)%4;
 }
-
-noBtn.addEventListener("mouseenter", moveNo);
-noBtn.addEventListener("touchstart", moveNo);
-
-noBtn.addEventListener("click", () => {
-    breakScreen.style.display = "flex";
-    setTimeout(()=>breakScreen.style.display="none",1500);
+noBtn.addEventListener("mouseenter",moveNo);
+noBtn.addEventListener("touchstart",moveNo);
+noBtn.addEventListener("click",()=>{
+    breakScreen.style.display="flex";
+    setTimeout(()=>breakScreen.style.display="none",1200);
 });
 
-/* =========================
-   BLACK HEARTS (CONTROLLED)
-========================= */
+/* =====================
+   CANVAS (DPR FIX)
+===================== */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
 function resize(){
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    canvas.width = innerWidth * dpr;
+    canvas.height = innerHeight * dpr;
+    canvas.style.width = innerWidth+"px";
+    canvas.style.height = innerHeight+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 resize();
-addEventListener("resize", resize);
+addEventListener("resize",resize);
+
+/* =====================
+   HEART SYSTEM
+===================== */
+const INITIAL = isMobile ? 16 : 50;
+const MAX     = isMobile ? 55 : 120;
+const LINK    = isMobile ? 80 : 130;
+const SPEED   = isMobile ? 0.18 : 0.4;
 
 const hearts = [];
-const LINK_DISTANCE = 130;
-const MAX_HEARTS = 120;
-const MULTIPLY_RADIUS = 20;
+let frame = 0;
 
 class Heart{
     constructor(x,y){
-        this.x = x ?? Math.random()*canvas.width;
-        this.y = y ?? Math.random()*canvas.height;
-        this.vx = (Math.random()-0.5)*0.4;
-        this.vy = (Math.random()-0.5)*0.4;
-        this.size = 12;
+        this.x = x ?? Math.random()*innerWidth;
+        this.y = y ?? Math.random()*innerHeight;
+        this.vx = (Math.random()-0.5)*SPEED;
+        this.vy = (Math.random()-0.5)*SPEED;
         this.alpha = 0;
     }
     move(){
+        this.vx *= 0.995;  // easing
+        this.vy *= 0.995;
         this.x += this.vx;
         this.y += this.vy;
-        if(this.x<0||this.x>canvas.width) this.vx*=-1;
-        if(this.y<0||this.y>canvas.height) this.vy*=-1;
-        this.alpha = Math.min(1, this.alpha + 0.02);
+        if(this.x<0||this.x>innerWidth) this.vx*=-1;
+        if(this.y<0||this.y>innerHeight) this.vy*=-1;
+        this.alpha = Math.min(1,this.alpha+0.025);
     }
     draw(){
         ctx.globalAlpha = this.alpha;
-        ctx.font = this.size+"px serif";
+        ctx.font = "12px serif";
         ctx.fillText("🖤",this.x,this.y);
         ctx.globalAlpha = 1;
     }
 }
 
-for(let i=0;i<50;i++) hearts.push(new Heart());
+for(let i=0;i<INITIAL;i++) hearts.push(new Heart());
 
-canvas.addEventListener("click", e=>{
-    let added = 0;
-
-    for(let i = hearts.length-1; i >= 0; i--){
-        if(hearts.length >= MAX_HEARTS) break;
-
-        const h = hearts[i];
-        const d = Math.hypot(h.x - e.clientX, h.y - e.clientY);
-
-        if(d < MULTIPLY_RADIUS && added < 2){
-            hearts.push(new Heart(h.x, h.y));
-            added++;
-        }
-    }
+canvas.addEventListener("click",e=>{
+    if(hearts.length>=MAX) return;
+    hearts.push(new Heart(e.clientX,e.clientY));
 });
 
+/* =====================
+   ANIMATION LOOP
+===================== */
 function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    frame++;
+    ctx.clearRect(0,0,innerWidth,innerHeight);
 
     hearts.forEach(h=>{
         h.move();
         h.draw();
     });
 
-    for(let i=0;i<hearts.length;i++){
-        for(let j=i+1;j<hearts.length;j++){
-            const d = Math.hypot(
-                hearts[i].x-hearts[j].x,
-                hearts[i].y-hearts[j].y
-            );
-            if(d<LINK_DISTANCE){
-                ctx.strokeStyle="rgba(0,0,0,0.25)";
-                ctx.beginPath();
-                ctx.moveTo(hearts[i].x,hearts[i].y);
-                ctx.lineTo(hearts[j].x,hearts[j].y);
-                ctx.stroke();
+    /* draw lines every 2nd frame on mobile */
+    if(!isMobile || frame%2===0){
+        for(let i=0;i<hearts.length;i++){
+            for(let j=i+1;j<hearts.length;j++){
+                const d = Math.hypot(
+                    hearts[i].x-hearts[j].x,
+                    hearts[i].y-hearts[j].y
+                );
+                if(d<LINK){
+                    ctx.strokeStyle="rgba(0,0,0,0.15)";
+                    ctx.beginPath();
+                    ctx.moveTo(hearts[i].x,hearts[i].y);
+                    ctx.lineTo(hearts[j].x,hearts[j].y);
+                    ctx.stroke();
+                }
             }
         }
     }
@@ -226,7 +206,6 @@ function animate(){
 }
 animate();
 
-/* ========================= */
 function goYes(){
     location.href="rose.html";
 }
