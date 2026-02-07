@@ -1,145 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>RIYA ❤️ Valentine</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body{
-    margin:0;
-    height:100vh;
-    background:#ffe4e9;
-    font-family:Georgia,serif;
-    overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-/* Canvas */
-canvas{
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:0;
-}
-
-/* Content */
-.container{
-    text-align:center;
-    z-index:2;
-}
-
-h1{
-    font-size:40px;
-    color:#c9184a;
-    margin-bottom:18px;
-}
-
-p{
-    font-size:20px;
-    color:#7a1c2d;
-    margin-bottom:35px;
-}
-
-/* Buttons */
-.buttons{
-    position:relative;
-    width:360px;
-    height:160px;
-    margin:auto;
-}
-
-button{
-    padding:14px 34px;
-    font-size:20px;
-    border:none;
-    border-radius:30px;
-    cursor:pointer;
-    position:absolute;
-}
-
-.yes{
-    background:#ff4d6d;
-    color:white;
-    left:0;
-    top:60px;
-}
-
-.no{
-    background:#e0e0e0;
-    color:#333;
-    right:0;
-    top:60px;
-}
-
-/* Broken heart overlay */
-#break{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.4);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    font-size:120px;
-    z-index:5;
-}
-</style>
-</head>
-
-<body>
-
-<canvas id="bg"></canvas>
-
-<div id="break">💔</div>
-
-<div class="container">
-    <h1>RIYA, will you be my Valentine? 🌹</h1>
-    <p>You make my world a little more beautiful every day.</p>
-
-    <div class="buttons" id="btnArea">
-        <button class="yes" onclick="goYes()">Yes 💖</button>
-        <button class="no" id="noBtn">No 🙈</button>
-    </div>
-</div>
-
 <script>
 /* =========================
-   NO BUTTON ESCAPE + BREAK
-========================= */
-const noBtn = document.getElementById("noBtn");
-const area = document.getElementById("btnArea");
-const breakScreen = document.getElementById("break");
-
-let step = 0;
-
-function moveNo(){
-    const pad = 10;
-    const maxX = area.clientWidth - noBtn.offsetWidth - pad;
-    const maxY = area.clientHeight - noBtn.offsetHeight - pad;
-
-    const pos = [
-        {x:maxX, y:pad},
-        {x:pad,  y:pad},
-        {x:maxX, y:maxY},
-        {x:pad,  y:maxY}
-    ];
-
-    noBtn.style.left = pos[step].x + "px";
-    noBtn.style.top  = pos[step].y + "px";
-    step = (step + 1) % pos.length;
-}
-
-noBtn.addEventListener("mouseenter", moveNo);
-noBtn.addEventListener("touchstart", moveNo);
-
-noBtn.addEventListener("click", () => {
-    breakScreen.style.display = "flex";
-    setTimeout(()=>breakScreen.style.display="none",1500);
-});
-
-/* =========================
-   BLACK HEARTS + MULTIPLY
+   BLACK HEARTS (SMOOTH + LIMITED)
 ========================= */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
@@ -152,37 +13,54 @@ resize();
 addEventListener("resize", resize);
 
 const hearts = [];
-const LINK_DISTANCE = 140;
+const INITIAL_HEARTS = 40;
+const MAX_HEARTS = 120;
+const LINK_DISTANCE = 130;
 
 class Heart{
     constructor(x,y){
         this.x = x ?? Math.random()*canvas.width;
         this.y = y ?? Math.random()*canvas.height;
-        this.vx = (Math.random()-0.5)*0.5;
-        this.vy = (Math.random()-0.5)*0.5;
+        this.vx = (Math.random()-0.5)*0.35;   // slower
+        this.vy = (Math.random()-0.5)*0.35;
         this.size = 12;
+        this.alpha = 0;                       // fade-in
+        this.cooldown = false;                // prevent spam
     }
+
     move(){
         this.x += this.vx;
         this.y += this.vy;
+
         if(this.x<0||this.x>canvas.width) this.vx*=-1;
         if(this.y<0||this.y>canvas.height) this.vy*=-1;
+
+        if(this.alpha < 1) this.alpha += 0.02;
     }
+
     draw(){
+        ctx.globalAlpha = this.alpha;
         ctx.font = this.size+"px serif";
-        ctx.fillText("🖤",this.x,this.y);
+        ctx.fillText("🖤", this.x, this.y);
+        ctx.globalAlpha = 1;
     }
 }
 
-for(let i=0;i<50;i++) hearts.push(new Heart());
+// initial hearts
+for(let i=0;i<INITIAL_HEARTS;i++) hearts.push(new Heart());
 
 canvas.addEventListener("click", e=>{
+    if(hearts.length >= MAX_HEARTS) return;
+
     hearts.forEach(h=>{
-        const d = Math.hypot(h.x-e.clientX,h.y-e.clientY);
-        if(d < 25){
-            for(let i=0;i<3;i++){
-                hearts.push(new Heart(h.x,h.y));
-            }
+        const d = Math.hypot(h.x-e.clientX, h.y-e.clientY);
+
+        if(d < 25 && !h.cooldown){
+            hearts.push(new Heart(h.x, h.y));
+            h.cooldown = true;
+
+            // reset cooldown
+            setTimeout(()=>h.cooldown=false,600);
         }
     });
 });
@@ -201,24 +79,18 @@ function animate(){
                 hearts[i].x-hearts[j].x,
                 hearts[i].y-hearts[j].y
             );
-            if(d<LINK_DISTANCE){
-                ctx.strokeStyle="rgba(0,0,0,0.25)";
+
+            if(d < LINK_DISTANCE){
+                ctx.strokeStyle = "rgba(0,0,0,0.15)";
                 ctx.beginPath();
-                ctx.moveTo(hearts[i].x,hearts[i].y);
-                ctx.lineTo(hearts[j].x,hearts[j].y);
+                ctx.moveTo(hearts[i].x, hearts[i].y);
+                ctx.lineTo(hearts[j].x, hearts[j].y);
                 ctx.stroke();
             }
         }
     }
+
     requestAnimationFrame(animate);
 }
 animate();
-
-/* ========================= */
-function goYes(){
-    location.href="rose.html";
-}
 </script>
-
-</body>
-</html>
