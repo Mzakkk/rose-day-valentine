@@ -1,214 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>RIYA ❤️ Valentine</title>
+<title>Happy Rose Day RIYA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body{
     margin:0;
     height:100vh;
-    background:#ffe4e9;
-    font-family:Georgia,serif;
-    overflow:hidden;
+    background:url('https://images.unsplash.com/photo-1518893494013-481c1d8ed3fd')
+    center/cover no-repeat;
     display:flex;
     justify-content:center;
     align-items:center;
+    font-family:Georgia,serif;
+    color:white;
+    overflow:hidden;
 }
-canvas{
-    position:fixed;
-    inset:0;
-    z-index:0;
-}
-.container{
+
+.card{
+    background:rgba(0,0,0,0.6);
+    padding:30px;
+    border-radius:20px;
     text-align:center;
-    z-index:2;
+    animation:fadeIn 2s ease;
 }
-h1{font-size:36px;color:#c9184a;}
-p{font-size:18px;color:#7a1c2d;margin-bottom:28px;}
+
+h1{font-size:36px;}
+p{font-size:18px;}
+
 .buttons{
+    margin-top:20px;
     position:relative;
-    width:320px;
-    height:140px;
+    height:80px;
 }
+
 button{
-    padding:14px 30px;
+    padding:12px 25px;
     font-size:18px;
     border:none;
-    border-radius:30px;
+    border-radius:25px;
     cursor:pointer;
     position:absolute;
 }
+
 .yes{
     background:#ff4d6d;
     color:white;
-    left:50%;
-    transform:translateX(-50%);
-    top:50px;
+    left:20px;
 }
+
 .no{
-    background:#e0e0e0;
-    color:#333;
-    right:0;
-    top:50px;
+    background:#adb5bd;
+    color:black;
+    left:140px;
 }
-#break{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.4);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    font-size:100px;
-    z-index:5;
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="bg"></canvas>
-<div id="break">💔</div>
+<audio autoplay loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
-<div class="container">
-    <h1>RIYA, will you be my Valentine? 🌹</h1>
-    <p>You make my world a little more beautiful every day.</p>
-    <div class="buttons" id="btnArea">
-        <button class="yes" onclick="goYes()">Yes 💖</button>
-        <button class="no" id="noBtn">No 🙈</button>
-    </div>
+<div class="card">
+<h1>Happy Rose Day, RIYA 🌹</h1>
+<p>
+RIYA, on this Rose Day I’m sending you<br>
+lots of beautiful roses to remind you<br>
+how special you are to me.
+</p>
+
+<div class="buttons">
+<button class="yes" onclick="yes()">Yes 💖</button>
+<button class="no" id="noBtn">No 🙈</button>
+</div>
 </div>
 
 <script>
-/* =====================
-   DEVICE CHECK
-===================== */
-const isMobile = window.innerWidth < 768;
-
-/* =====================
-   NO BUTTON
-===================== */
 const noBtn = document.getElementById("noBtn");
-const area = document.getElementById("btnArea");
-const breakScreen = document.getElementById("break");
-let step = 0;
 
-function moveNo(){
-    const pad = 8;
-    const maxX = area.clientWidth - noBtn.offsetWidth - pad;
-    const maxY = area.clientHeight - noBtn.offsetHeight - pad;
-    const pos = [
-        {x:maxX,y:pad},{x:pad,y:pad},
-        {x:maxX,y:maxY},{x:pad,y:maxY}
-    ];
-    noBtn.style.left = pos[step].x+"px";
-    noBtn.style.top  = pos[step].y+"px";
-    step = (step+1)%4;
-}
-noBtn.addEventListener("mouseenter",moveNo);
-noBtn.addEventListener("touchstart",moveNo);
-noBtn.addEventListener("click",()=>{
-    breakScreen.style.display="flex";
-    setTimeout(()=>breakScreen.style.display="none",1200);
-});
-
-/* =====================
-   CANVAS SETUP (SAFE)
-===================== */
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
-
-function resize(){
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-/* =====================
-   HEART CONFIG
-===================== */
-const INITIAL_HEARTS = isMobile ? 15 : 40;
-const MAX_HEARTS     = isMobile ? 50 : 110;
-const LINK_DISTANCE  = isMobile ? 80 : 130;
-const SPEED          = isMobile ? 0.15 : 0.35;
-
-const hearts = [];
-
-/* =====================
-   HEART CLASS
-===================== */
-class Heart{
-    constructor(x,y){
-        this.x = x ?? Math.random()*canvas.width;
-        this.y = y ?? Math.random()*canvas.height;
-        this.vx = (Math.random()-0.5)*SPEED;
-        this.vy = (Math.random()-0.5)*SPEED;
-        this.alpha = 0;
-    }
-    update(){
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if(this.x<0||this.x>canvas.width) this.vx*=-1;
-        if(this.y<0||this.y>canvas.height) this.vy*=-1;
-
-        if(this.alpha < 1) this.alpha += 0.02;
-    }
-    draw(){
-        ctx.globalAlpha = this.alpha;
-        ctx.font = "12px serif";
-        ctx.fillText("🖤", this.x, this.y);
-        ctx.globalAlpha = 1;
-    }
+function moveButton(){
+    const x = Math.random() * 200;
+    const y = Math.random() * 40;
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
 }
 
-/* INIT HEARTS */
-for(let i=0;i<INITIAL_HEARTS;i++){
-    hearts.push(new Heart());
-}
+noBtn.addEventListener("mouseover", moveButton);
+noBtn.addEventListener("touchstart", moveButton);
 
-/* =====================
-   CLICK → ADD HEART
-===================== */
-canvas.addEventListener("click", e=>{
-    if(hearts.length >= MAX_HEARTS) return;
-    hearts.push(new Heart(e.clientX, e.clientY));
-});
-
-/* =====================
-   ANIMATION LOOP
-===================== */
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    hearts.forEach(h=>{
-        h.update();
-        h.draw();
-    });
-
-    for(let i=0;i<hearts.length;i++){
-        for(let j=i+1;j<hearts.length;j++){
-            const d = Math.hypot(
-                hearts[i].x - hearts[j].x,
-                hearts[i].y - hearts[j].y
-            );
-            if(d < LINK_DISTANCE){
-                ctx.strokeStyle = "rgba(0,0,0,0.15)";
-                ctx.beginPath();
-                ctx.moveTo(hearts[i].x, hearts[i].y);
-                ctx.lineTo(hearts[j].x, hearts[j].y);
-                ctx.stroke();
-            }
-        }
-    }
-    requestAnimationFrame(animate);
-}
-animate();
-
-/* ===================== */
-function goYes(){
-    location.href="rose.html";
+function yes(){
+    alert("RIYA ❤️ You just made my day! 🌹");
 }
 </script>
 
