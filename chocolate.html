@@ -13,80 +13,64 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#3b1f1b,#7a3a2e);
-}
-
-/* =====================
-   CHOCOLATE SYRUP BG
-===================== */
-.syrup-layer{
-    position:fixed;
-    inset:0;
-    z-index:0;
-    pointer-events:none;
-    overflow:hidden;
-}
-
-/* syrup drip */
-.syrup{
-    position:absolute;
-    top:-120px;
-    width:40px;
-    height:280px;
-    background:linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.25),
-        rgba(92,43,33,0.9),
-        rgba(62,25,18,1)
-    );
-    border-radius:0 0 40px 40px;
-    filter:blur(0.4px);
-    animation:drip linear infinite;
-}
-
-/* rounded drip end */
-.syrup::after{
-    content:"";
-    position:absolute;
-    bottom:-18px;
-    left:50%;
-    transform:translateX(-50%);
-    width:44px;
-    height:44px;
-    background:rgba(62,25,18,0.95);
-    border-radius:50%;
-}
-
-@keyframes drip{
-    from{transform:translateY(-140px);}
-    to{transform:translateY(120vh);}
-}
-
-/* Floating chocolates on click */
-.choco{
-    position:absolute;
-    bottom:-40px;
-    font-size:30px;
-    opacity:0.75;
-    animation:floatUp 12s linear infinite;
-    pointer-events:none;
-}
-
-@keyframes floatUp{
-    to{transform:translateY(-130vh); opacity:0;}
+    background:linear-gradient(135deg,#8d5a45,#b37a5d);
 }
 
 /* =====================
    CARD
 ===================== */
 .card{
-    background:rgba(255,255,255,0.94);
-    padding:42px 34px;
+    background:#fff8f5;
+    padding:42px 34px 60px;
     border-radius:30px;
     text-align:center;
     max-width:540px;
     z-index:5;
     position:relative;
+    overflow:hidden;
+}
+
+/* Syrup inside card */
+.syrup-layer{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+}
+
+/* Individual syrup */
+.syrup{
+    position:absolute;
+    width:18px;
+    height:180px;
+    background:linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.35),
+        rgba(120,60,40,0.85)
+    );
+    border-radius:0 0 20px 20px;
+    filter:blur(0.4px);
+    opacity:0.6;
+    transition:transform 1.8s ease-out;
+}
+
+/* drip head */
+.syrup::after{
+    content:"";
+    position:absolute;
+    bottom:-10px;
+    left:50%;
+    transform:translateX(-50%);
+    width:20px;
+    height:20px;
+    background:rgba(120,60,40,0.9);
+    border-radius:50%;
+}
+
+/* CONTENT ABOVE SYRUP */
+.card-content{
+    position:relative;
+    z-index:2;
 }
 
 h1{
@@ -119,18 +103,12 @@ button{
     color:white;
 }
 
-/* Message after click */
+/* Message */
 .finalMessage{
     display:none;
     font-size:22px;
     color:#5a1f16;
     margin-top:25px;
-    animation:fadeIn 1.5s ease;
-}
-
-@keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
 }
 
 /* TIMER */
@@ -138,7 +116,7 @@ button{
     margin-top:28px;
     padding:18px;
     border-radius:20px;
-    background:#f7e6e4;
+    background:#f3e1da;
 }
 
 #countdown{
@@ -167,60 +145,76 @@ button{
 
 <body>
 
-<!-- CHOCOLATE SYRUP BACKGROUND -->
-<div class="syrup-layer" id="syrupLayer"></div>
+<div class="card" id="card">
 
-<div class="card">
+    <!-- SYRUP LAYER -->
+    <div class="syrup-layer" id="syrupLayer"></div>
 
-    <h1>Happy Chocolate Day, RIYA 🍫</h1>
+    <div class="card-content">
 
-    <p>
-        Just like chocolate, you make life sweeter without trying.
-        Every little moment with you melts my worries
-        and fills my heart with warmth.
-    </p>
+        <h1>Happy Chocolate Day, RIYA 🍫</h1>
 
-    <div class="buttons">
-        <button class="chocoBtn" onclick="showChocolate()">Chocolate 🍫</button>
+        <p>
+            Just like chocolate, you make life sweeter without trying.
+            Every little moment with you melts my worries
+            and fills my heart with warmth.
+        </p>
+
+        <div class="buttons">
+            <button class="chocoBtn" onclick="showChocolate()">Chocolate 🍫</button>
+        </div>
+
+        <div class="finalMessage" id="finalMsg">
+            Chocolate on your lips would be sweet —  
+            but I’d still want to taste you more 🤎
+        </div>
+
+        <div class="timerBox">
+            <div id="countdown">🔒 Unlocks on Teddy Day</div>
+            <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
+        </div>
+
     </div>
-
-    <div class="finalMessage" id="finalMsg">
-        Chocolate on your lips would be sweet —  
-        but I’d still want to taste you more 🤎
-    </div>
-
-    <div class="timerBox">
-        <div id="countdown">🔒 Unlocks on Teddy Day</div>
-        <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
-    </div>
-
 </div>
 
 <script>
-/* CREATE SYRUP DRIPS */
+/* CREATE SYRUP */
 const syrupLayer=document.getElementById("syrupLayer");
+const syrups=[];
 
-for(let i=0;i<6;i++){
+for(let i=0;i<5;i++){
     const s=document.createElement("div");
     s.className="syrup";
-    s.style.left = (i*16 + Math.random()*6) + "%";
-    s.style.animationDuration = (18 + Math.random()*10) + "s";
-    s.style.opacity = Math.random()*0.4 + 0.35;
+    s.style.left=(10 + i*18)+"%";
+    s.style.top="-120px";
     syrupLayer.appendChild(s);
+    syrups.push(s);
 }
 
-/* CLICK EFFECT */
+/* MOVE SYRUP TOWARDS TOUCH */
+const card=document.getElementById("card");
+
+function moveSyrup(x,y){
+    const rect=card.getBoundingClientRect();
+    syrups.forEach(s=>{
+        const dx=x-rect.left;
+        const dy=y-rect.top;
+        s.style.transform=`translate(${dx*0.15}px, ${dy*0.25}px)`;
+    });
+}
+
+card.addEventListener("click",e=>{
+    moveSyrup(e.clientX,e.clientY);
+});
+
+card.addEventListener("touchstart",e=>{
+    const t=e.touches[0];
+    moveSyrup(t.clientX,t.clientY);
+});
+
+/* MESSAGE */
 function showChocolate(){
     document.getElementById("finalMsg").style.display="block";
-
-    for(let i=0;i<14;i++){
-        const c=document.createElement("span");
-        c.className="choco";
-        c.innerHTML="🍫";
-        c.style.left=Math.random()*100+"%";
-        c.style.animationDelay=Math.random()*4+"s";
-        document.body.appendChild(c);
-    }
 }
 
 /* DATE LOCK */
@@ -234,7 +228,6 @@ const nextBtn=document.getElementById("nextBtn");
 
 function updateTimer(){
     const diff=targetDate-new Date();
-
     if(diff<=0){
         countdownEl.innerHTML="🧸 It’s Teddy Day 🧸";
         nextBtn.disabled=false;
@@ -242,11 +235,9 @@ function updateTimer(){
         nextBtn.innerText="Next ➜";
         return;
     }
-
     const h=Math.floor(diff/3600000);
     const m=Math.floor((diff/60000)%60);
     const s=Math.floor((diff/1000)%60);
-
     countdownEl.innerHTML=`🔒 Unlocks in ${h}h ${m}m ${s}s`;
 }
 setInterval(updateTimer,1000);
