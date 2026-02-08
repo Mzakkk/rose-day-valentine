@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Teddy Day 🧸</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teddy Day – Real Hug</title>
 
 <style>
 html,body{
@@ -11,17 +11,24 @@ html,body{
     height:100%;
     background:#000;
     overflow:hidden;
+    font-family:Georgia,serif;
 }
 
-/* ---------------- ROSE PETALS ---------------- */
+/* ---------------- PETALS ---------------- */
 .petal{
     position:fixed;
     top:-40px;
+    color:#ff4d6d;
+    opacity:.9;
+    animation:petalFall linear infinite;
     pointer-events:none;
-    animation:fall linear infinite;
 }
-@keyframes fall{
-    to{transform:translateY(120vh) rotate(540deg); opacity:0;}
+
+@keyframes petalFall{
+    to{
+        transform:translateY(120vh) rotate(540deg);
+        opacity:0;
+    }
 }
 
 /* ---------------- HANGING TEDDIES ---------------- */
@@ -31,106 +38,79 @@ html,body{
     display:flex;
     flex-direction:column;
     align-items:center;
-    transform-origin:top center;
     animation:swing 4s ease-in-out infinite;
+    transform-origin:top center;
     cursor:pointer;
 }
-@keyframes swing{
-    0%{transform:rotate(-6deg);}
-    50%{transform:rotate(6deg);}
-    100%{transform:rotate(-6deg);}
-}
+
 .rope{
     width:3px;
     height:70px;
     background:#444;
 }
-.hanging .icon{
-    font-size:58px;
+
+.teddy{
+    font-size:64px;
+    margin-top:-5px;
 }
 
-/* ---------------- HUG OVERLAY ---------------- */
+@keyframes swing{
+    0%{transform:rotate(-6deg);}
+    50%{transform:rotate(6deg);}
+    100%{transform:rotate(-6deg);}
+}
+
+/* ---------------- OVERLAY ---------------- */
 .overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.92);
+    background:rgba(0,0,0,.9);
     display:none;
     align-items:center;
     justify-content:center;
     z-index:10;
 }
 
-/* ---------------- STAGE ---------------- */
-.stage{
+/* ---------------- HUG SCENE ---------------- */
+.hugScene{
     position:relative;
-    width:380px;
-    height:260px;
+    width:300px;
+    height:180px;
 }
 
-/* ---------------- TEDDY SVG ---------------- */
-.teddy{
+.hugTeddy{
     position:absolute;
-    width:170px;
-    height:240px;
+    font-size:110px;
+    top:30px;
 }
 
 .left{
-    left:-220px;
-    animation:slideL 1.2s ease forwards;
+    left:-120px;
+    animation:leftIn 1.2s ease forwards;
 }
+
 .right{
-    right:-220px;
-    transform:scaleX(-1);
-    animation:slideR 1.2s ease forwards;
+    right:-120px;
+    animation:rightIn 1.2s ease forwards;
 }
 
-@keyframes slideL{to{left:40px;}}
-@keyframes slideR{to{right:40px;}}
-
-/* body squeeze */
-.squeeze{
-    animation:squeeze 1.6s ease-in-out infinite;
+@keyframes leftIn{
+    to{left:40px;}
 }
-@keyframes squeeze{
-    50%{transform:scale(1.03);}
+@keyframes rightIn{
+    to{right:40px;}
 }
 
-/* ---------------- ARM JOINT ---------------- */
-.arm{
-    transform-box:fill-box;
-    transform-origin:top center;
-    animation:armHug 1.2s ease forwards;
-}
-@keyframes armHug{
-    to{transform:rotate(-38deg);}
-}
-
-/* ---------------- FACE ---------------- */
-.eye{
-    animation:blink 1.2s ease forwards;
-}
-@keyframes blink{
-    to{transform:scaleY(0.1);}
-}
-
-.blush{
-    opacity:0;
-    animation:blushOn 1.2s ease forwards;
-}
-@keyframes blushOn{
-    to{opacity:.4;}
-}
-
-/* ---------------- HEART ---------------- */
 .heart{
     position:absolute;
-    top:15px;
+    font-size:48px;
+    top:20px;
     left:50%;
     transform:translateX(-50%);
-    font-size:46px;
-    animation:beat 1s infinite;
+    animation:heartBeat 1s ease-in-out infinite;
 }
-@keyframes beat{
+
+@keyframes heartBeat{
     50%{transform:translateX(-50%) scale(1.3);}
 }
 </style>
@@ -140,12 +120,12 @@ html,body{
 
 <!-- ROSE PETALS -->
 <script>
-for(let i=0;i<45;i++){
+for(let i=0;i<50;i++){
     const p=document.createElement("div");
     p.className="petal";
     p.innerText="🌹";
     p.style.left=Math.random()*100+"vw";
-    p.style.fontSize=16+Math.random()*16+"px";
+    p.style.fontSize=16+Math.random()*18+"px";
     p.style.animationDuration=6+Math.random()*6+"s";
     document.body.appendChild(p);
 }
@@ -157,7 +137,8 @@ for(let i=0;i<12;i++){
     const h=document.createElement("div");
     h.className="hanging";
     h.style.left=(i*8+2)+"%";
-    h.innerHTML=`<div class="rope"></div><div class="icon">🧸</div>`;
+    h.style.animationDuration=3+Math.random()*3+"s";
+    h.innerHTML=`<div class="rope"></div><div class="teddy">🧸</div>`;
     h.onclick=showHug;
     document.body.appendChild(h);
 }
@@ -165,39 +146,10 @@ for(let i=0;i<12;i++){
 
 <!-- HUG OVERLAY -->
 <div class="overlay" id="overlay">
-    <div class="stage">
-
-        <!-- LEFT TEDDY -->
-        <svg class="teddy left squeeze" viewBox="0 0 200 260">
-            <!-- head -->
-            <circle cx="100" cy="60" r="45" fill="#c68c53"/>
-            <!-- eyes -->
-            <ellipse class="eye" cx="85" cy="55" rx="6" ry="8" fill="#000"/>
-            <ellipse class="eye" cx="115" cy="55" rx="6" ry="8" fill="#000"/>
-            <!-- blush -->
-            <circle class="blush" cx="70" cy="70" r="8" fill="#ff8fa3"/>
-            <circle class="blush" cx="130" cy="70" r="8" fill="#ff8fa3"/>
-            <!-- body -->
-            <ellipse cx="100" cy="150" rx="55" ry="65" fill="#c68c53"/>
-            <!-- arms -->
-            <rect class="arm" x="15" y="115" width="40" height="90" rx="20" fill="#b97a45"/>
-            <rect class="arm" x="145" y="115" width="40" height="90" rx="20" fill="#b97a45"/>
-        </svg>
-
-        <!-- RIGHT TEDDY -->
-        <svg class="teddy right squeeze" viewBox="0 0 200 260">
-            <circle cx="100" cy="60" r="45" fill="#c68c53"/>
-            <ellipse class="eye" cx="85" cy="55" rx="6" ry="8" fill="#000"/>
-            <ellipse class="eye" cx="115" cy="55" rx="6" ry="8" fill="#000"/>
-            <circle class="blush" cx="70" cy="70" r="8" fill="#ff8fa3"/>
-            <circle class="blush" cx="130" cy="70" r="8" fill="#ff8fa3"/>
-            <ellipse cx="100" cy="150" rx="55" ry="65" fill="#c68c53"/>
-            <rect class="arm" x="15" y="115" width="40" height="90" rx="20" fill="#b97a45"/>
-            <rect class="arm" x="145" y="115" width="40" height="90" rx="20" fill="#b97a45"/>
-        </svg>
-
+    <div class="hugScene">
+        <div class="hugTeddy left">🧸</div>
+        <div class="hugTeddy right">🧸</div>
         <div class="heart">❤️</div>
-
     </div>
 </div>
 
@@ -205,7 +157,10 @@ for(let i=0;i<12;i++){
 function showHug(){
     const o=document.getElementById("overlay");
     o.style.display="flex";
-    setTimeout(()=>o.style.display="none",4200);
+
+    setTimeout(()=>{
+        o.style.display="none";
+    },3500);
 }
 </script>
 
