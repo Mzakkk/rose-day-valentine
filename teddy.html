@@ -12,56 +12,73 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#f6c1cc,#fbe4ea);
+    background:radial-gradient(circle at top,#111,#000);
     overflow:hidden;
+}
+
+/* FLOATING ROSE PETALS */
+.petal{
+    position:fixed;
+    top:-50px;
+    font-size:22px;
+    opacity:0.8;
+    animation:fall linear infinite;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(360deg);
+        opacity:0;
+    }
 }
 
 /* CARD */
 .card{
-    background:#fff;
+    background:#111;
     padding:42px 34px 60px;
     border-radius:30px;
     text-align:center;
     max-width:520px;
     width:90%;
-    box-shadow:0 20px 60px rgba(0,0,0,0.12);
+    box-shadow:0 25px 70px rgba(255,255,255,0.08);
+    color:#fff;
+    position:relative;
+    z-index:2;
 }
 
 /* TEXT */
 h1{
     font-size:34px;
-    color:#a0183a;
+    color:#ff6b8a;
     margin-bottom:18px;
 }
 
 p{
     font-size:20px;
-    color:#6d1020;
+    color:#f2cfd6;
     line-height:1.6;
 }
 
-/* TEDDY */
+/* HANGING TEDDY */
+.rope{
+    width:3px;
+    height:60px;
+    background:#555;
+    margin:0 auto;
+}
+
 .teddy{
     font-size:90px;
-    margin:25px 0;
-    animation:bounce 2.8s ease-in-out infinite;
+    margin-top:-5px;
+    animation:swing 3s ease-in-out infinite;
+    transform-origin:top center;
     cursor:pointer;
 }
 
-@keyframes bounce{
-    0%{transform:translateY(0);}
-    50%{transform:translateY(-10px);}
-    100%{transform:translateY(0);}
-}
-
-.teddy.hug{
-    animation:hug 1.5s ease-in-out infinite;
-}
-
-@keyframes hug{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.1);}
-    100%{transform:scale(1);}
+@keyframes swing{
+    0%{transform:rotate(-5deg);}
+    50%{transform:rotate(5deg);}
+    100%{transform:rotate(-5deg);}
 }
 
 /* BUTTON */
@@ -70,9 +87,10 @@ button{
     font-size:18px;
     border:none;
     border-radius:30px;
-    background:#e85b7f;
+    background:#ff4f7a;
     color:white;
     cursor:pointer;
+    margin-top:20px;
 }
 
 /* MESSAGE */
@@ -80,7 +98,30 @@ button{
     display:none;
     margin-top:20px;
     font-size:22px;
-    color:#8b0e1a;
+    color:#ffb6c5;
+}
+
+/* DIM OVERLAY */
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:5;
+}
+
+/* HUG SCENE */
+.hugBox{
+    font-size:100px;
+    animation:hugPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes hugPulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.15);}
+    100%{transform:scale(1);}
 }
 
 /* TIMER */
@@ -88,26 +129,26 @@ button{
     margin-top:30px;
     padding:18px;
     border-radius:20px;
-    background:#fdecef;
+    background:#1a1a1a;
 }
 
 #countdown{
     font-size:18px;
     margin-bottom:10px;
-    color:#8b0e1a;
+    color:#ff9aad;
 }
 
 .nextBtn{
     padding:12px 30px;
     border:none;
     border-radius:30px;
-    background:#bbb;
-    color:#555;
+    background:#444;
+    color:#777;
     cursor:not-allowed;
 }
 
 .nextBtn.unlocked{
-    background:#e85b7f;
+    background:#ff4f7a;
     color:white;
     cursor:pointer;
 }
@@ -116,15 +157,28 @@ button{
 
 <body>
 
-<div class="card">
+<!-- ROSE PETALS -->
+<script>
+for(let i=0;i<25;i++){
+    const p=document.createElement("div");
+    p.className="petal";
+    p.innerText="🌹";
+    p.style.left=Math.random()*100+"vw";
+    p.style.animationDuration=6+Math.random()*6+"s";
+    p.style.fontSize=18+Math.random()*12+"px";
+    document.body.appendChild(p);
+}
+</script>
 
+<div class="card">
     <h1>Happy Teddy Day, RIYA 🧸</h1>
 
     <p>
-        If I could, I’d wrap you in the warmest hug
-        and never let go.
+        Even in the darkest night,<br>
+        my hug is always around you.
     </p>
 
+    <div class="rope"></div>
     <div class="teddy" id="teddy" onclick="hugTeddy()">🧸</div>
 
     <button onclick="hugTeddy()">Hug Teddy 🤗</button>
@@ -137,15 +191,23 @@ button{
         <div id="countdown">🔒 Unlocks on Promise Day</div>
         <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
     </div>
+</div>
 
+<!-- HUG OVERLAY -->
+<div class="overlay" id="overlay">
+    <div class="hugBox">🧸❤️🧸</div>
 </div>
 
 <script>
 /* HUG INTERACTION */
 function hugTeddy(){
-    const t=document.getElementById("teddy");
-    t.classList.add("hug");
     document.getElementById("msg").style.display="block";
+    const overlay=document.getElementById("overlay");
+    overlay.style.display="flex";
+
+    setTimeout(()=>{
+        overlay.style.display="none";
+    },3000);
 }
 
 /* TIMER */
