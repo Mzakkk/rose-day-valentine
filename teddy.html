@@ -5,113 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-html,body{
+body{
     margin:0;
-    width:100%;
-    height:100%;
-    background:#000;
-    overflow:hidden;
+    height:100vh;
     font-family:Georgia,serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:radial-gradient(circle at top,#111,#000);
+    overflow:hidden;
 }
 
-/* ---------------- PETALS ---------------- */
+/* FLOATING ROSE PETALS */
 .petal{
     position:fixed;
-    top:-40px;
-    color:#ff4d6d;
-    opacity:.9;
-    animation:petalFall linear infinite;
-    pointer-events:none;
+    top:-50px;
+    font-size:22px;
+    opacity:0.8;
+    animation:fall linear infinite;
 }
 
-@keyframes petalFall{
+@keyframes fall{
     to{
-        transform:translateY(120vh) rotate(540deg);
+        transform:translateY(110vh) rotate(360deg);
         opacity:0;
     }
 }
 
-/* ---------------- HANGING TEDDIES ---------------- */
-.hanging{
-    position:absolute;
-    top:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    animation:swing 4s ease-in-out infinite;
+/* CARD */
+.card{
+    background:#111;
+    padding:42px 34px 60px;
+    border-radius:30px;
+    text-align:center;
+    max-width:520px;
+    width:90%;
+    box-shadow:0 25px 70px rgba(255,255,255,0.08);
+    color:#fff;
+    position:relative;
+    z-index:2;
+}
+
+/* TEXT */
+h1{
+    font-size:34px;
+    color:#ff6b8a;
+    margin-bottom:18px;
+}
+
+p{
+    font-size:20px;
+    color:#f2cfd6;
+    line-height:1.6;
+}
+
+/* HANGING TEDDY */
+.rope{
+    width:3px;
+    height:60px;
+    background:#555;
+    margin:0 auto;
+}
+
+.teddy{
+    font-size:90px;
+    margin-top:-5px;
+    animation:swing 3s ease-in-out infinite;
     transform-origin:top center;
     cursor:pointer;
 }
 
-.rope{
-    width:3px;
-    height:70px;
-    background:#444;
-}
-
-.teddy{
-    font-size:64px;
-    margin-top:-5px;
-}
-
 @keyframes swing{
-    0%{transform:rotate(-6deg);}
-    50%{transform:rotate(6deg);}
-    100%{transform:rotate(-6deg);}
+    0%{transform:rotate(-5deg);}
+    50%{transform:rotate(5deg);}
+    100%{transform:rotate(-5deg);}
 }
 
-/* ---------------- OVERLAY ---------------- */
+/* BUTTON */
+button{
+    padding:14px 34px;
+    font-size:18px;
+    border:none;
+    border-radius:30px;
+    background:#ff4f7a;
+    color:white;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+/* MESSAGE */
+.message{
+    display:none;
+    margin-top:20px;
+    font-size:22px;
+    color:#ffb6c5;
+}
+
+/* DIM OVERLAY */
 .overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.9);
+    background:rgba(0,0,0,0.85);
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:10;
+    z-index:5;
 }
 
-/* ---------------- HUG SCENE ---------------- */
-.hugScene{
-    position:relative;
-    width:300px;
-    height:180px;
+/* HUG SCENE */
+.hugBox{
+    font-size:100px;
+    animation:hugPulse 1.6s ease-in-out infinite;
 }
 
-.hugTeddy{
-    position:absolute;
-    font-size:110px;
-    top:30px;
+@keyframes hugPulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.15);}
+    100%{transform:scale(1);}
 }
 
-.left{
-    left:-120px;
-    animation:leftIn 1.2s ease forwards;
+/* TIMER */
+.timerBox{
+    margin-top:30px;
+    padding:18px;
+    border-radius:20px;
+    background:#1a1a1a;
 }
 
-.right{
-    right:-120px;
-    animation:rightIn 1.2s ease forwards;
+#countdown{
+    font-size:18px;
+    margin-bottom:10px;
+    color:#ff9aad;
 }
 
-@keyframes leftIn{
-    to{left:40px;}
-}
-@keyframes rightIn{
-    to{right:40px;}
-}
-
-.heart{
-    position:absolute;
-    font-size:48px;
-    top:20px;
-    left:50%;
-    transform:translateX(-50%);
-    animation:heartBeat 1s ease-in-out infinite;
+.nextBtn{
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    background:#444;
+    color:#777;
+    cursor:not-allowed;
 }
 
-@keyframes heartBeat{
-    50%{transform:translateX(-50%) scale(1.3);}
+.nextBtn.unlocked{
+    background:#ff4f7a;
+    color:white;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -120,48 +159,92 @@ html,body{
 
 <!-- ROSE PETALS -->
 <script>
-for(let i=0;i<50;i++){
+for(let i=0;i<25;i++){
     const p=document.createElement("div");
     p.className="petal";
     p.innerText="🌹";
     p.style.left=Math.random()*100+"vw";
-    p.style.fontSize=16+Math.random()*18+"px";
     p.style.animationDuration=6+Math.random()*6+"s";
+    p.style.fontSize=18+Math.random()*12+"px";
     document.body.appendChild(p);
 }
 </script>
 
-<!-- HANGING TEDDIES -->
-<script>
-for(let i=0;i<12;i++){
-    const h=document.createElement("div");
-    h.className="hanging";
-    h.style.left=(i*8+2)+"%";
-    h.style.animationDuration=3+Math.random()*3+"s";
-    h.innerHTML=`<div class="rope"></div><div class="teddy">🧸</div>`;
-    h.onclick=showHug;
-    document.body.appendChild(h);
-}
-</script>
+<div class="card">
+    <h1>Happy Teddy Day, RIYA 🧸</h1>
 
-<!-- HUG OVERLAY -->
-<div class="overlay" id="overlay">
-    <div class="hugScene">
-        <div class="hugTeddy left">🧸</div>
-        <div class="hugTeddy right">🧸</div>
-        <div class="heart">❤️</div>
+    <p>
+        Even in the darkest night,<br>
+        my hug is always around you.
+    </p>
+
+    <div class="rope"></div>
+    <div class="teddy" id="teddy" onclick="hugTeddy()">🧸</div>
+
+    <button onclick="hugTeddy()">Hug Teddy 🤗</button>
+
+    <div class="message" id="msg">
+        This hug carries everything I feel for you ❤️
+    </div>
+
+    <div class="timerBox">
+        <div id="countdown">🔒 Unlocks on Promise Day</div>
+        <button class="nextBtn" id="nextBtn" disabled>Next 🔒</button>
     </div>
 </div>
 
+<!-- HUG OVERLAY -->
+<div class="overlay" id="overlay">
+    <div class="hugBox">🧸❤️🧸</div>
+</div>
+
 <script>
-function showHug(){
-    const o=document.getElementById("overlay");
-    o.style.display="flex";
+/* HUG INTERACTION */
+function hugTeddy(){
+    document.getElementById("msg").style.display="block";
+    const overlay=document.getElementById("overlay");
+    overlay.style.display="flex";
 
     setTimeout(()=>{
-        o.style.display="none";
-    },3500);
+        overlay.style.display="none";
+    },3000);
 }
+
+/* TIMER */
+const TEST_MODE=false;
+const targetDate = TEST_MODE
+    ? new Date(Date.now()+5000)
+    : new Date("2026-02-11T00:00:00");
+
+const countdownEl=document.getElementById("countdown");
+const nextBtn=document.getElementById("nextBtn");
+
+function updateTimer(){
+    const diff = targetDate - new Date();
+
+    if(diff<=0){
+        countdownEl.innerHTML="💍 It’s Promise Day 💍";
+        nextBtn.disabled=false;
+        nextBtn.classList.add("unlocked");
+        nextBtn.innerText="Next ➜";
+        return;
+    }
+
+    const h=Math.floor(diff/3600000);
+    const m=Math.floor((diff/60000)%60);
+    const s=Math.floor((diff/1000)%60);
+
+    countdownEl.innerHTML=`🔒 Unlocks in ${h}h ${m}m ${s}s`;
+}
+
+setInterval(updateTimer,1000);
+updateTimer();
+
+nextBtn.onclick=()=>{
+    if(!nextBtn.disabled){
+        window.location.href="promise.html";
+    }
+};
 </script>
 
 </body>
